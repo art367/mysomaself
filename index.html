@@ -99,6 +99,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 <!-- START -->
 <div id="s-start" class="screen active" style="justify-content:center">
   <audio id="opening-track" src="opening.mp3" loop preload="auto"></audio>
+  <audio id="chakra-audio" loop preload="none"></audio>
   <p class="tagline">not self-improvement · self-return</p>
   <h1>MySomaSelf</h1>
   <p>Your body is not a problem to fix.<br>It is a home to return to.</p>
@@ -567,7 +568,7 @@ function openChakra(id){
   ring.textContent='breathe'; ring.className='breath-ring'; ring.style.transform='';
   ring.style.borderColor=ck.color+'55';
   
-  show('s-practice');
+  show('s-practice'); if(typeof playChakraMusicOnOpen!=='undefined'&&currentChakra) playChakraMusicOnOpen(currentChakra.id);
 }
 
 // ═══ BREATH ENGINE ═══
@@ -697,7 +698,126 @@ function completeReturn(){
 
 </script>
 <script>
-// ═══ OPENING MUSIC ═══
+// ═══ AUDIO MANAGER ═══
+let musicPlaying = false;
+let currentAudioType = null; // 'opening' or 'chakra'
+const openingTrack = document.getElementById('opening-track');
+const chakraAudio = document.getElementById('chakra-audio');
+
+const CHAKRA_TRACKS = {
+  root:     'chakra-root.mp3',
+  sacral:   'chakra-sacral.mp3',
+  solar:    'chakra-solar.mp3',
+  heart:    'chakra-heart.mp3',
+  throat:   'chakra-throat.mp3',
+  thirdeye: 'chakra-thirdeye.mp3',
+  crown:    'chakra-crown.mp3'
+};
+
+function fadeIn(audio, targetVol, duration) {
+  audio.volume = 0;
+  const steps = 30;
+  const interval = duration / steps;
+  const inc = targetVol / steps;
+  let v = 0;
+  const t = setInterval(() => {
+    v = Math.min(v + inc, targetVol);
+    audio.volume = v;
+    if (v >= targetVol) clearInterval(t);
+  }, interval);
+}
+
+function fadeOut(audio, duration, onDone) {
+  const steps = 30;
+  const interval = duration / steps;
+  const dec = audio.volume / steps;
+  const t = setInterval(() => {
+    audio.volume = Math.max(audio.volume - dec, 0);
+    if (audio.volume <= 0) {
+      clearInterval(t);
+      audio.pause();
+      audio.currentTime = 0;
+      if (onDone) onDone();
+    }
+  }, interval);
+}
+
+function playOpeningMusic() {
+  if (currentAudioType === 'opening' && musicPlaying) return;
+  // Fade out chakra if playing
+  if (currentAudioType === 'chakra' && !chakraAudio.paused) {
+    fadeOut(chakraAudio, 1500);
+  }
+  currentAudioType = 'opening';
+  openingTrack.play().then(() => {
+    musicPlaying = true;
+    fadeIn(openingTrack, 0.7, 2000);
+  }).catch(() => {});
+}
+
+function playChakraMusic(chakraId) {
+  const src = CHAKRA_TRACKS[chakraId];
+  if (!src) return;
+  // Fade out opening if playing
+  if (!openingTrack.paused) fadeOut(openingTrack, 1500);
+  // Fade out previous chakra track if different
+  if (chakraAudio.src && !chakraAudio.paused && currentAudioType === 'chakra') {
+    fadeOut(chakraAudio, 1000, () => {
+      chakraAudio.src = src;
+      chakraAudio.play().then(() => { fadeIn(chakraAudio, 0.75, 2000); }).catch(()=>{});
+    });
+  } else {
+    chakraAudio.src = src;
+    chakraAudio.play().then(() => { fadeIn(chakraAudio, 0.75, 2000); }).catch(()=>{});
+  }
+  currentAudioType = 'chakra';
+  musicPlaying = true;
+}
+
+function stopAllMusic() {
+  fadeOut(openingTrack, 800);
+  fadeOut(chakraAudio, 800);
+  musicPlaying = false;
+  currentAudioType = null;
+}
+
+function toggleMusic() {
+  const btn = document.getElementById('music-btn');
+  if (musicPlaying) {
+    stopAllMusic();
+    btn.textContent = '♪ play music';
+  } else {
+    if (currentScreen === 's-start') playOpeningMusic();
+    else if (currentChakra) playChakraMusic(currentChakra.id);
+    btn.textContent = '♪ pause music';
+  }
+}
+
+// Auto-play opening on first interaction
+document.addEventListener('click', function tryPlay() {
+  if (currentScreen === 's-start') playOpeningMusic();
+  document.removeEventListener('click', tryPlay);
+});
+
+// Hook into show() to manage music transitions
+const _origShow = show;
+show = function(id) {
+  if (id === 's-start') {
+    // fade out chakra, fade in opening
+    if (!openingTrack.paused || musicPlaying) { /* keep */ }
+    setTimeout(() => playOpeningMusic(), 300);
+  } else if (id !== 's-practice') {
+    // non-chakra screen — fade out opening gently, leave chakra if playing
+    if (!openingTrack.paused) fadeOut(openingTrack, 1500);
+  }
+  _origShow(id);
+};
+
+// openChakra music hook — called from existing openChakra()
+function playChakraMusicOnOpen(id) {
+  playChakraMusic(id);
+  document.getElementById('music-btn').textContent = '♪ pause music';
+}
 let musicPlaying = false;
 const track = document.getElementById('opening-track');
 
