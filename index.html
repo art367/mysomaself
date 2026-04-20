@@ -49,8 +49,8 @@ p{font-size:clamp(.85rem,2.5vw,1rem);line-height:1.8;text-align:center;color:var
 .chakra-pt.active-chakra .orb-inner{filter:url(#glow)}
 @keyframes pulseOrb{0%,100%{r:10;opacity:1}50%{r:14;opacity:.7}}
 @keyframes pulseOuter{0%,100%{r:22;opacity:.25}50%{r:30;opacity:.05}}
-.chakra-pt.active-chakra .orb-inner{animation:pulseOrb 2s ease-in-out infinite}
-.chakra-pt.active-chakra .orb-outer{animation:pulseOuter 2s ease-in-out infinite}
+.chakra-pt.pulsing .orb-inner{animation:pulseOrb 2s ease-in-out infinite}
+.chakra-pt.pulsing .orb-outer{animation:pulseOuter 2s ease-in-out infinite}
 
 /* BREATH RING */
 .breath-ring{width:110px;height:110px;border-radius:50%;border:2px solid rgba(155,89,182,.3);margin:1em auto;display:flex;align-items:center;justify-content:center;font-size:.82rem;color:var(--muted);transition:all 1.5s ease;background:radial-gradient(circle,rgba(255,255,255,.6),transparent)}
@@ -119,56 +119,87 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
     <h2 id="chakra-greeting">Good morning</h2>
     <p id="chakra-subtitle" style="margin-bottom:.8em">Tap the glowing chakra to begin your practice.</p>
     <div id="lotus-wrap">
-      <svg id="lotus-svg" viewBox="0 0 300 480" xmlns="http://www.w3.org/2000/svg">
+      <svg id="lotus-svg" viewBox="0 0 300 520" xmlns="http://www.w3.org/2000/svg">
         <defs>
-          <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
-            <feGaussianBlur stdDeviation="6" result="blur"/>
+          <filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
+            <feGaussianBlur stdDeviation="7" result="blur"/>
             <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
           </filter>
           <filter id="softglow" x="-30%" y="-30%" width="160%" height="160%">
             <feGaussianBlur stdDeviation="3" result="blur"/>
             <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
           </filter>
+          <radialGradient id="lotusGrad" cx="50%" cy="60%" r="50%">
+            <stop offset="0%" stop-color="rgba(220,180,255,0.4)"/>
+            <stop offset="100%" stop-color="rgba(180,220,255,0.1)"/>
+          </radialGradient>
         </defs>
 
-        <!-- LOTUS FLOWER petals -->
-        <g opacity="0.18" fill="none" stroke="rgba(155,89,182,0.6)" stroke-width="1">
-          <ellipse cx="150" cy="420" rx="55" ry="28" transform="rotate(-30 150 420)"/>
-          <ellipse cx="150" cy="420" rx="55" ry="28" transform="rotate(0 150 420)"/>
-          <ellipse cx="150" cy="420" rx="55" ry="28" transform="rotate(30 150 420)"/>
-          <ellipse cx="150" cy="420" rx="55" ry="28" transform="rotate(60 150 420)"/>
-          <ellipse cx="150" cy="420" rx="55" ry="28" transform="rotate(-60 150 420)"/>
-          <ellipse cx="150" cy="420" rx="55" ry="28" transform="rotate(90 150 420)"/>
-        </g>
-        <!-- Lotus center -->
-        <circle cx="150" cy="420" r="18" fill="rgba(155,89,182,0.12)" stroke="rgba(155,89,182,0.3)" stroke-width="1"/>
+        <!-- LOTUS PLINTH — large layered petals at base -->
+        <!-- Outer petal ring -->
+        <ellipse cx="150" cy="468" rx="88" ry="22" fill="rgba(220,180,255,0.18)" stroke="rgba(180,140,230,0.35)" stroke-width="1"/>
+        <ellipse cx="150" cy="468" rx="72" ry="17" fill="rgba(230,200,255,0.22)" stroke="rgba(180,140,230,0.3)" stroke-width="1"/>
+        <!-- Individual outer petals -->
+        <path d="M150 448 Q108 438 96 458 Q120 468 150 465 Q180 468 204 458 Q192 438 150 448Z" fill="rgba(240,210,255,0.3)" stroke="rgba(180,140,230,0.25)" stroke-width="1"/>
+        <path d="M150 448 Q118 430 110 452 Q130 465 150 462 Q170 465 190 452 Q182 430 150 448Z" fill="rgba(245,220,255,0.35)" stroke="rgba(180,140,230,0.25)" stroke-width="1"/>
+        <!-- Inner petal ring -->
+        <path d="M150 445 Q125 432 122 450 Q136 460 150 458 Q164 460 178 450 Q175 432 150 445Z" fill="rgba(255,230,255,0.45)" stroke="rgba(200,160,240,0.4)" stroke-width="1"/>
+        <!-- Lotus centre dome -->
+        <ellipse cx="150" cy="448" rx="38" ry="10" fill="rgba(245,225,255,0.5)" stroke="rgba(200,160,240,0.5)" stroke-width="1"/>
+        <!-- Lotus seed dots -->
+        <circle cx="142" cy="447" r="2" fill="rgba(180,140,220,0.5)"/>
+        <circle cx="150" cy="445" r="2" fill="rgba(180,140,220,0.5)"/>
+        <circle cx="158" cy="447" r="2" fill="rgba(180,140,220,0.5)"/>
+        <circle cx="146" cy="451" r="1.5" fill="rgba(180,140,220,0.4)"/>
+        <circle cx="154" cy="451" r="1.5" fill="rgba(180,140,220,0.4)"/>
 
-        <!-- BODY OUTLINE — seated crossed-leg figure -->
-        <!-- Head -->
-        <circle cx="150" cy="68" r="28" fill="none" stroke="rgba(100,80,140,0.25)" stroke-width="1.5"/>
+        <!-- BUDDHA BODY — serene seated figure -->
+        <!-- Robe/body base — wide draped form -->
+        <path d="M88 420 Q80 390 82 350 Q85 310 88 280 Q95 260 110 250 Q130 242 150 240 Q170 242 190 250 Q205 260 212 280 Q215 310 218 350 Q220 390 212 420 Q180 438 150 440 Q120 438 88 420Z"
+              fill="rgba(220,200,240,0.15)" stroke="rgba(160,130,200,0.3)" stroke-width="1.2"/>
+        <!-- Robe drape lines -->
+        <path d="M110 260 Q105 320 100 390 Q102 410 110 422" fill="none" stroke="rgba(160,130,200,0.15)" stroke-width="1"/>
+        <path d="M190 260 Q195 320 200 390 Q198 410 190 422" fill="none" stroke="rgba(160,130,200,0.15)" stroke-width="1"/>
+        <path d="M130 242 Q125 300 122 380 Q124 410 130 425" fill="none" stroke="rgba(160,130,200,0.12)" stroke-width="1"/>
+        <path d="M170 242 Q175 300 178 380 Q176 410 170 425" fill="none" stroke="rgba(160,130,200,0.12)" stroke-width="1"/>
+
+        <!-- Shoulders -->
+        <path d="M88 268 Q75 272 70 285 Q72 300 88 295" fill="rgba(220,200,240,0.15)" stroke="rgba(160,130,200,0.25)" stroke-width="1.2"/>
+        <path d="M212 268 Q225 272 230 285 Q228 300 212 295" fill="rgba(220,200,240,0.15)" stroke="rgba(160,130,200,0.25)" stroke-width="1.2"/>
+
+        <!-- Arms resting inward -->
+        <path d="M88 295 Q82 330 85 370 Q95 385 110 388" fill="none" stroke="rgba(160,130,200,0.25)" stroke-width="1.2"/>
+        <path d="M212 295 Q218 330 215 370 Q205 385 190 388" fill="none" stroke="rgba(160,130,200,0.25)" stroke-width="1.2"/>
+
+        <!-- Hands in dhyana mudra — resting in lap, one on other -->
+        <ellipse cx="150" cy="398" rx="30" ry="10" fill="rgba(230,210,245,0.3)" stroke="rgba(160,130,200,0.3)" stroke-width="1"/>
+        <ellipse cx="150" cy="393" rx="22" ry="8" fill="rgba(235,215,248,0.35)" stroke="rgba(160,130,200,0.28)" stroke-width="1"/>
+        <!-- Thumb tips touching -->
+        <path d="M132 392 Q150 386 168 392" fill="none" stroke="rgba(160,130,200,0.25)" stroke-width="1"/>
+
         <!-- Neck -->
-        <line x1="150" y1="96" x2="150" y2="118" stroke="rgba(100,80,140,0.2)" stroke-width="1.5"/>
-        <!-- Torso -->
-        <path d="M 118 118 Q 150 112 182 118 L 186 220 Q 150 228 114 220 Z" fill="none" stroke="rgba(100,80,140,0.22)" stroke-width="1.5"/>
-        <!-- Left arm -->
-        <path d="M 118 130 Q 88 160 76 200" fill="none" stroke="rgba(100,80,140,0.2)" stroke-width="1.5"/>
-        <!-- Right arm -->
-        <path d="M 182 130 Q 212 160 224 200" fill="none" stroke="rgba(100,80,140,0.2)" stroke-width="1.5"/>
-        <!-- Left hand resting on knee -->
-        <circle cx="76" cy="204" r="8" fill="none" stroke="rgba(100,80,140,0.2)" stroke-width="1.5"/>
-        <!-- Right hand -->
-        <circle cx="224" cy="204" r="8" fill="none" stroke="rgba(100,80,140,0.2)" stroke-width="1.5"/>
-        <!-- Crossed legs -->
-        <path d="M 114 220 Q 90 260 72 290 Q 100 310 150 308 Q 200 310 228 290 Q 210 260 186 220" fill="none" stroke="rgba(100,80,140,0.22)" stroke-width="1.5"/>
-        <!-- Left leg detail -->
-        <path d="M 72 290 Q 80 330 110 350 Q 130 360 150 358" fill="none" stroke="rgba(100,80,140,0.18)" stroke-width="1.5"/>
-        <!-- Right leg detail -->
-        <path d="M 228 290 Q 220 330 190 350 Q 170 360 150 358" fill="none" stroke="rgba(100,80,140,0.18)" stroke-width="1.5"/>
-        <!-- Feet crossed -->
-        <ellipse cx="120" cy="358" rx="18" ry="9" fill="none" stroke="rgba(100,80,140,0.18)" stroke-width="1.5"/>
-        <ellipse cx="180" cy="358" rx="18" ry="9" fill="none" stroke="rgba(100,80,140,0.18)" stroke-width="1.5"/>
-        <!-- Centre line / sushumna -->
-        <line x1="150" y1="80" x2="150" y2="360" stroke="rgba(200,180,220,0.2)" stroke-width="1" stroke-dasharray="4,6"/>
+        <rect x="143" y="225" width="14" height="20" rx="6" fill="rgba(220,200,240,0.2)" stroke="rgba(160,130,200,0.2)" stroke-width="1"/>
+
+        <!-- HEAD — rounded, serene -->
+        <!-- Ushnisha (topknot) -->
+        <ellipse cx="150" cy="170" rx="10" ry="14" fill="rgba(210,185,240,0.3)" stroke="rgba(160,130,200,0.3)" stroke-width="1"/>
+        <circle cx="150" cy="162" r="5" fill="rgba(220,195,245,0.4)" stroke="rgba(160,130,200,0.3)" stroke-width="1"/>
+        <!-- Main head -->
+        <ellipse cx="150" cy="200" rx="34" ry="40" fill="rgba(225,210,245,0.2)" stroke="rgba(160,130,200,0.3)" stroke-width="1.3"/>
+        <!-- Face features — gentle -->
+        <!-- Eyes closed in meditation -->
+        <path d="M136 196 Q142 193 148 196" fill="none" stroke="rgba(130,100,170,0.4)" stroke-width="1.2" stroke-linecap="round"/>
+        <path d="M152 196 Q158 193 164 196" fill="none" stroke="rgba(130,100,170,0.4)" stroke-width="1.2" stroke-linecap="round"/>
+        <!-- Gentle smile -->
+        <path d="M142 210 Q150 215 158 210" fill="none" stroke="rgba(130,100,170,0.35)" stroke-width="1" stroke-linecap="round"/>
+        <!-- Third eye mark (bindi) -->
+        <circle cx="150" cy="188" r="2.5" fill="rgba(155,89,182,0.4)"/>
+        <!-- Ear lobes (elongated — Buddha feature) -->
+        <ellipse cx="116" cy="204" rx="5" ry="9" fill="rgba(220,200,240,0.2)" stroke="rgba(160,130,200,0.25)" stroke-width="1"/>
+        <ellipse cx="184" cy="204" rx="5" ry="9" fill="rgba(220,200,240,0.2)" stroke="rgba(160,130,200,0.25)" stroke-width="1"/>
+
+        <!-- Sushumna (central energy channel) — subtle -->
+        <line x1="150" y1="178" x2="150" y2="415" stroke="rgba(200,170,230,0.15)" stroke-width="1" stroke-dasharray="3,8"/>
 
         <!-- CHAKRA POINTS — injected by JS -->
         <g id="chakra-pts"></g>
@@ -368,31 +399,31 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 <script>
 // ═══ DATA ═══
 const CHAKRAS = [
-  { id:'crown',    name:'Crown Chakra',    sanskrit:'Sahasrara',  color:'#9b59b6', glow:'rgba(155,89,182,0.5)',  cy:72,  timeStart:21,timeEnd:24, label:'9pm+',     emoji:'💜', element:'Consciousness',
+  { id:'crown',    name:'Crown Chakra',    sanskrit:'Sahasrara',  color:'#9b59b6', glow:'rgba(155,89,182,0.5)',  cy:163,  timeStart:21,timeEnd:24, label:'9pm+',     emoji:'💜', element:'Consciousness',
     intro:'Prepare for rest and renewal. The crown dissolves the day and returns you to wholeness.',
     affirmation:'I release this day with gratitude. I am connected to all that is. I rest in peace.',
     practice:'Lie down if possible. With each exhale, release one thing from your day — a worry, a tension. Scan from feet upward, thanking each part of your body for its work today.',
     tip:'Magnesium glycinate 30 minutes before sleep relaxes muscles and deepens sleep quality. Pair with a cool room (18–20°C) for optimal recovery.',
     breathPattern:[4,4,8], breathCycles:4, freq:963 },
-  { id:'thirdeye', name:'Third Eye',        sanskrit:'Ajna',       color:'#3498db', glow:'rgba(52,152,219,0.5)',  cy:110, timeStart:18,timeEnd:21, label:'6–9pm',    emoji:'💙', element:'Light',
+  { id:'thirdeye', name:'Third Eye',        sanskrit:'Ajna',       color:'#3498db', glow:'rgba(52,152,219,0.5)',  cy:191, timeStart:18,timeEnd:21, label:'6–9pm',    emoji:'💙', element:'Light',
     intro:'The evening turns inward. Intuition deepens as the world quiets around you.',
     affirmation:'I trust my inner knowing. I see clearly. I am guided.',
     practice:'Close your eyes. Press two fingers gently between your eyebrows. Breathe slowly. Imagine soft indigo light expanding behind your eyes. Ask your intuition one question and simply listen.',
     tip:'Reducing blue light after 7pm significantly improves melatonin production. Use warm lighting or blue-light glasses as your evening ritual.',
     breathPattern:[4,4,6], breathCycles:4, freq:852 },
-  { id:'throat',   name:'Throat Chakra',   sanskrit:'Vishuddha',  color:'#1abc9c', glow:'rgba(26,188,156,0.5)',  cy:152, timeStart:16,timeEnd:18, label:'4–6pm',    emoji:'🩵', element:'Sound',
+  { id:'throat',   name:'Throat Chakra',   sanskrit:'Vishuddha',  color:'#1abc9c', glow:'rgba(26,188,156,0.5)',  cy:238, timeStart:16,timeEnd:18, label:'4–6pm',    emoji:'🩵', element:'Sound',
     intro:'Express what is true. The throat invites authentic voice and honest release.',
     affirmation:'My voice matters. I speak with truth and kindness. I am heard.',
     practice:'Hum softly — any tone. Feel the vibration in your throat and chest. Then speak one truth aloud, even a whisper: something you need to say. Let sound be your release.',
     tip:'Humming stimulates the vagus nerve and activates the parasympathetic nervous system. Even 2 minutes of humming lowers heart rate and reduces anxiety.',
     breathPattern:[4,0,6], breathCycles:3, freq:741 },
-  { id:'heart',    name:'Heart Chakra',    sanskrit:'Anahata',    color:'#2ecc71', glow:'rgba(46,204,113,0.5)',  cy:196, timeStart:14,timeEnd:16, label:'2–4pm',    emoji:'💚', element:'Air',
+  { id:'heart',    name:'Heart Chakra',    sanskrit:'Anahata',    color:'#2ecc71', glow:'rgba(46,204,113,0.5)',  cy:278, timeStart:14,timeEnd:16, label:'2–4pm',    emoji:'💚', element:'Air',
     intro:'The afternoon softens. Your heart calls you to connection — with others and with yourself.',
     affirmation:'I give and receive love freely. I am enough. My heart is open.',
     practice:'Place both hands on your heart. Feel it beating. Breathe into the space behind your sternum. With each exhale, release one thing you\'ve been carrying. On each inhale, receive warmth.',
     tip:'A 10-minute walk in nature after lunch lowers cortisol, aids digestion, and opens the heart. Even a slow amble is medicine.',
     breathPattern:[5,2,5], breathCycles:4, freq:639 },
-  { id:'solar',    name:'Solar Plexus',    sanskrit:'Manipura',   color:'#f1c40f', glow:'rgba(241,196,15,0.5)',  cy:236, timeStart:11,timeEnd:14, label:'11am–2pm', emoji:'💛', element:'Fire',
+  { id:'solar',    name:'Solar Plexus',    sanskrit:'Manipura',   color:'#f1c40f', glow:'rgba(241,196,15,0.5)',  cy:318, timeStart:11,timeEnd:14, label:'11am–2pm', emoji:'💛', element:'Fire',
     intro:'Midday power. Your solar plexus is the seat of will and confidence. Act from your core.',
     affirmation:'I am capable. I trust my direction. I act with clarity and fire.',
     practice:'Sit tall. Take three sharp belly pumps (breath of fire). Then one long deep inhale, hold, release with an audible sigh. Feel your centre ignite.',
@@ -404,7 +435,7 @@ const CHAKRAS = [
     practice:'Move your hips in slow circles. Place both hands on your lower belly. Breathe into the warmth there. Let creative ideas arrive without judgment.',
     tip:'Omega-3s support creative thinking and fluid nervous system function. A handful of walnuts or flaxseed oil in your morning meal feeds your brain\'s fluidity.',
     breathPattern:[4,2,6], breathCycles:3, freq:417 },
-  { id:'root',     name:'Root Chakra',     sanskrit:'Muladhara',  color:'#e74c3c', glow:'rgba(231,76,60,0.5)',   cy:310, timeStart:5, timeEnd:8,  label:'5–8am',    emoji:'❤️', element:'Earth',
+  { id:'root',     name:'Root Chakra',     sanskrit:'Muladhara',  color:'#e74c3c', glow:'rgba(231,76,60,0.5)',   cy:400, timeStart:5, timeEnd:8,  label:'5–8am',    emoji:'❤️', element:'Earth',
     intro:'You are waking into your body. The root grounds you — safety, belonging, presence.',
     affirmation:'I am safe. I am here. My body is my home.',
     practice:'Stand barefoot if you can. Feel the floor beneath you. Sway gently side to side, letting your weight settle. Breathe down into your belly and imagine roots growing from your feet deep into the earth.',
@@ -513,7 +544,7 @@ function renderLotus(){
   CHAKRAS.forEach(ck=>{
     const isAct=ck.id===active.id;
     const grp=document.createElementNS('http://www.w3.org/2000/svg','g');
-    grp.setAttribute('class','chakra-pt'+(isAct?' active-chakra':''));
+    grp.setAttribute('class','chakra-pt'+(isAct?' active-chakra':''));  // glow only, no pulse until clicked
     grp.setAttribute('onclick',`openChakra('${ck.id}')`);
     // outer glow
     const outer=document.createElementNS('http://www.w3.org/2000/svg','circle');
@@ -553,6 +584,10 @@ function updateGreeting(){
 function openChakra(id){
   const ck=CHAKRAS.find(c=>c.id===id); if(!ck) return;
   currentChakra=ck;
+  // Pulse the clicked chakra orb
+  document.querySelectorAll('.chakra-pt').forEach(el=>el.classList.remove('pulsing'));
+  const pts=document.querySelectorAll('.chakra-pt');
+  pts.forEach(el=>{ if(el.getAttribute('onclick')&&el.getAttribute('onclick').includes(id)) el.classList.add('pulsing'); });
   const orb=document.getElementById('practice-orb');
   orb.textContent=ck.emoji;
   orb.style.background=`radial-gradient(circle,${ck.glow},transparent 70%)`;
