@@ -98,6 +98,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 
 <!-- START -->
 <div id="s-start" class="screen active" style="justify-content:center">
+  <audio id="opening-track" src="opening.mp3" loop preload="auto"></audio>
   <p class="tagline">not self-improvement · self-return</p>
   <h1>MySomaSelf</h1>
   <p>Your body is not a problem to fix.<br>It is a home to return to.</p>
@@ -107,6 +108,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
     <div class="btn" onclick="show('s-sauna')">Wellness Session Prep</div>
   </div>
   <p style="margin-top:2em;font-size:.76rem;letter-spacing:.1em">✦ touch · breathe · return ✦</p>
+  <div id="music-btn" class="btn" onclick="toggleMusic()" style="margin-top:.8em;font-size:.78rem">♪ play music</div>
 </div>
 
 <!-- CHAKRA LOTUS HOME -->
@@ -693,6 +695,65 @@ function completeReturn(){
   document.getElementById('moments-complete').textContent=`✦ ${moments} moment${moments===1?'':'s'} of return`;
 }
 
+</script>
+<script>
+// ═══ OPENING MUSIC ═══
+let musicPlaying = false;
+const track = document.getElementById('opening-track');
+
+function toggleMusic() {
+  const btn = document.getElementById('music-btn');
+  if (musicPlaying) {
+    track.pause();
+    musicPlaying = false;
+    btn.textContent = '♪ play music';
+  } else {
+    track.play().catch(()=>{});
+    musicPlaying = true;
+    btn.textContent = '♪ pause music';
+  }
+}
+
+// Auto-play on first user interaction
+document.addEventListener('click', function tryPlay() {
+  if (!musicPlaying && currentScreen === 's-start') {
+    track.volume = 0;
+    track.play().then(() => {
+      musicPlaying = true;
+      document.getElementById('music-btn').textContent = '♪ pause music';
+      // Fade in gently
+      let v = 0;
+      const fade = setInterval(() => {
+        v = Math.min(v + 0.02, 0.7);
+        track.volume = v;
+        if (v >= 0.7) clearInterval(fade);
+      }, 80);
+    }).catch(() => {});
+  }
+  document.removeEventListener('click', tryPlay);
+});
+
+// Fade out when leaving start screen
+const _origShow = show;
+show = function(id) {
+  if (id !== 's-start' && musicPlaying) {
+    let v = track.volume;
+    const fade = setInterval(() => {
+      v = Math.max(v - 0.03, 0);
+      track.volume = v;
+      if (v <= 0) { track.pause(); track.currentTime = 0; musicPlaying = false; clearInterval(fade); }
+    }, 60);
+  }
+  if (id === 's-start' && !musicPlaying) {
+    track.volume = 0; track.play().then(() => {
+      musicPlaying = true;
+      document.getElementById('music-btn').textContent = '♪ pause music';
+      let v = 0;
+      const fade = setInterval(() => { v = Math.min(v+0.02,0.7); track.volume=v; if(v>=0.7) clearInterval(fade); }, 80);
+    }).catch(()=>{});
+  }
+  _origShow(id);
+};
 </script>
 </body>
 </html>
