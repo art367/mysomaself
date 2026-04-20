@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>MySomaSelf</title>
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: #08080f;
+  color: #f0e8df;
+  font-family: 'Georgia', 'Times New Roman', serif;
+  overflow: hidden;
+  height: 100dvh;
+  width: 100vw;
+}
+
+canvas {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 0;
+}
+
+#ui {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.screen {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 1.5rem;
+  max-width: 440px;
+  width: 100%;
+  animation: fadeUp 1.2s ease both;
+}
+.screen.active { display: flex; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes softPulse {
+  0%, 100% { opacity: 0.7; transform: scale(1); }
+  50%       { opacity: 1;   transform: scale(1.04); }
+}
+
+/* ── typography ── */
+.eyebrow {
+  font-size: clamp(0.6rem, 1.4vw, 0.72rem);
+  letter-spacing: 0.45em;
+  color: #c9a87c;
+  text-transform: uppercase;
+  margin-bottom: 0.6em;
+}
+
+h1 {
+  font-size: clamp(2rem, 7vw, 3rem);
+  letter-spacing: 0.18em;
+  color: #eddcca;
+  font-weight: 300;
+  text-transform: uppercase;
+  margin-bottom: 0.18em;
+  line-height: 1;
+}
+
+.tagline {
+  font-size: clamp(0.78rem, 1.8vw, 0.92rem);
+  letter-spacing: 0.22em;
+  color: #8a7a70;
+  margin-bottom: 2.4em;
+  font-style: italic;
+}
+
+.phase-label {
+  font-size: clamp(0.58rem, 1.2vw, 0.68rem);
+  letter-spacing: 0.5em;
+  color: #8272d4;
+  text-transform: uppercase;
+  margin-bottom: 0.5em;
+}
+
+.phase-title {
+  font-size: clamp(1.3rem, 4.5vw, 1.9rem);
+  color: #eddcca;
+  font-weight: 300;
+  letter-spacing: 0.06em;
+  margin-bottom: 0.3em;
+}
+
+.phase-prompt {
+  font-size: clamp(0.82rem, 1.9vw, 0.98rem);
+  color: #a89888;
+  line-height: 1.75;
+  font-style: italic;
+  margin-bottom: 1.6em;
+}
+
+/* ── progress dots ── */
+.phase-dots {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 1.8em;
+}
+.pdot {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.12);
+  transition: all 0.5s ease;
+}
+.pdot.done    { background: #c9a87c; box-shadow: 0 0 5px rgba(201,168,124,0.5); }
+.pdot.current { background: #8272d4; box-shadow: 0 0 7px rgba(130,114,212,0.7); transform: scale(1.4); }
+
+/* ── buttons ── */
+.btn {
+  background: transparent;
+  border: 1px solid rgba(237,220,202,0.3);
+  color: #eddcca;
+  padding: 0.85em 2.5em;
+  font-family: inherit;
+  font-size: clamp(0.72rem, 1.6vw, 0.85rem);
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.35s ease;
+  border-radius: 1px;
+  margin-top: 1em;
+}
+.btn:hover  { background: rgba(237,220,202,0.08); border-color: rgba(237,220,202,0.7); transform: translateY(-2px); }
+.btn:active { transform: translateY(0); }
+
+.btn-ghost {
+  border-color: transparent;
+  color: #6a5f58;
+  font-size: 0.72rem;
+  padding: 0.5em 1.2em;
+  margin-top: 0.3em;
+}
+.btn-ghost:hover { color: #a89888; background: transparent; transform: none; }
+
+/* ── body container (Phase 1) ── */
+#body-wrap {
+  position: relative;
+  width: 170px; height: 280px;
+  margin: 0 auto 1.2em;
+  flex-shrink: 0;
+}
+#body-wrap svg { width: 100%; height: 100%; }
+
+.sp {
+  position: absolute;
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(237,220,202,0.28);
+  background: rgba(8,8,15,0.5);
+  transform: translate(-50%,-50%);
+  cursor: pointer;
+  transition: all 0.4s ease;
+  display: flex; align-items: center; justify-content: center;
+  -webkit-tap-highlight-color: transparent;
+}
+.sp::after {
+  content: '';
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: rgba(237,220,202,0.4);
+  transition: all 0.4s ease;
+}
+.sp.lit {
+  border-color: rgba(201,168,124,0.9);
+  background: rgba(201,168,124,0.1);
+  animation: softPulse 2.5s infinite;
+  box-shadow: 0 0 18px rgba(201,168,124,0.28);
+}
+.sp.lit::after {
+  background: #c9a87c;
+  box-shadow: 0 0 7px rgba(201,168,124,0.8);
+  width: 9px; height: 9px;
+}
+
+#arrive-msg {
+  font-size: clamp(0.78rem, 1.7vw, 0.9rem);
+  color: #c9a87c;
+  font-style: italic;
+  min-height: 1.4em;
+  transition: opacity 0.5s ease;
+  margin-bottom: 0.4em;
+}
+
+/* ── sliders (Phase 2) ── */
+.sliders-wrap {
+  width: 100%; max-width: 340px;
+  margin-bottom: 1.6em;
+}
+.s-row { margin-bottom: 1.8em; }
+.s-labels {
+  display: flex; justify-content: space-between;
+  margin-bottom: 0.55em;
+}
+.s-label {
+  font-size: 0.72rem;
+  letter-spacing: 0.2em;
+  color: #7a6f68;
+  text-transform: uppercase;
+}
+
+input[type=range] {
+  -webkit-appearance: none;
+  width: 100%; height: 2px;
+  background: rgba(237,220,202,0.12);
+  outline: none; border-radius: 2px; cursor: pointer;
+}
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 15px; height: 15px;
+  border-radius: 50%;
+  background: #eddcca;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(237,220,202,0.45);
+  transition: transform 0.2s ease;
+}
+input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.35); }
+input[type=range]::-moz-range-thumb {
+  width: 15px; height: 15px;
+  border-radius: 50%;
+  background: #eddcca; border: none;
+  box-shadow: 0 0 10px rgba(237,220,202,0.45);
+}
+
+#guidance-txt {
+  font-size: clamp(0.82rem, 1.9vw, 0.95rem);
+  color: #c9a87c;
+  font-style: italic;
+  line-height: 1.75;
+  min-height: 3.2em;
+  transition: opacity 0.5s ease;
+}
+
+/* ── breath orb (Phase 3) ── */
+#breath-wrap {
+  position: relative;
+  width: 150px; height: 150px;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 1.2em;
+}
+#breath-orb {
+  width: 88px; height: 88px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 38% 38%, rgba(130,114,212,0.55), rgba(78,205,196,0.15));
+  box-shadow: 0 0 35px rgba(130,114,212,0.3);
+  transition: transform 0.1s linear, box-shadow 0.5s ease;
+}
+#breath-ring {
+  position: absolute;
+  width: 120px; height: 120px;
+  border-radius: 50%;
+  border: 1px solid rgba(130,114,212,0.18);
+  animation: softPulse 4s infinite;
+}
+
+#breath-word {
+  font-size: clamp(1rem, 3vw, 1.25rem);
+  letter-spacing: 0.2em;
+  color: #a898c8;
+  min-height: 1.6em;
+  transition: opacity 0.4s ease;
+  margin-bottom: 0.4em;
+}
+#breath-tally {
+  font-size: 0.68rem;
+  letter-spacing: 0.45em;
+  color: #8272d4;
+  text-transform: uppercase;
+  margin-bottom: 1.4em;
+}
+
+/* ── returning (Phase 4) ── */
+.rt-line {
+  font-size: clamp(1rem, 3vw, 1.25rem);
+  color: #eddcca;
+  font-weight: 300;
+  line-height: 2;
+  letter-spacing: 0.04em;
+  opacity: 0;
+  transition: opacity 1.8s ease;
+}
+.rt-sub {
+  font-size: clamp(0.8rem, 1.8vw, 0.92rem);
+  color: #7a6f68;
+  font-style: italic;
+  opacity: 0;
+  transition: opacity 1.8s ease;
+  margin-top: 0.6em;
+}
+#btn-here {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 2s ease;
+}
+
+/* ── completion ── */
+#moments-num {
+  font-size: clamp(3rem, 10vw, 4.5rem);
+  color: #e8c4a0;
+  font-weight: 300;
+  letter-spacing: 0.06em;
+  margin: 0.15em 0;
+}
+.moments-sub {
+  font-size: 0.68rem;
+  letter-spacing: 0.5em;
+  color: #7a6f68;
+  text-transform: uppercase;
+  margin-bottom: 1.6em;
+}
+#constellation {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  justify-content: center;
+  max-width: 180px;
+  margin: 0 auto 1.8em;
+}
+.cdot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: rgba(201,168,124,0.22);
+}
+.cdot.on {
+  background: #c9a87c;
+  box-shadow: 0 0 5px rgba(201,168,124,0.55);
+}
+#complete-msg {
+  font-size: clamp(0.82rem, 1.8vw, 0.94rem);
+  color: #a89888;
+  font-style: italic;
+  line-height: 1.75;
+  min-height: 2.8em;
+  margin-bottom: 0.4em;
+}
+</style>
+</head>
+<body>
+
+<canvas id="c"></canvas>
+
+<div id="ui">
+
+  <!-- ── START ── -->
+  <div id="s-start" class="screen active">
+    <div class="eyebrow">✦ a somatic experience</div>
+    <h1>MySomaSelf</h1>
+    <div class="tagline">Return to your body. Return to yourself.</div>
+    <button class="btn" onclick="goArrive()">Begin</button>
+    <button class="btn btn-ghost" id="btn-peek" onclick="peekMoments()">Your moments of return</button>
+  </div>
+
+  <!-- ── ARRIVING ── -->
+  <div id="s-arrive" class="screen">
+    <div class="phase-dots">
+      <div class="pdot current" id="pd0"></div>
+      <div class="pdot" id="pd1"></div>
+      <div class="pdot" id="pd2"></div>
+      <div class="pdot" id="pd3"></div>
+    </div>
+    <div class="phase-label">🌅 Arriving</div>
+    <div class="phase-title">Waking Into Self</div>
+    <div class="phase-prompt">"How does your body feel as you arrive?"<br>Touch each place to check in.</div>
+
+    <div id="body-wrap">
+      <svg viewBox="0 0 170 280" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="85" cy="24" rx="19" ry="22" stroke="rgba(237,220,202,0.1)" stroke-width="1.2" fill="rgba(237,220,202,0.02)"/>
+        <line x1="85" y1="45" x2="85" y2="57" stroke="rgba(237,220,202,0.08)" stroke-width="5" stroke-linecap="round"/>
+        <path d="M62 58 L52 128 L63 155 L107 155 L118 128 L108 58 Z" stroke="rgba(237,220,202,0.09)" stroke-width="1.2" fill="rgba(237,220,202,0.015)"/>
+        <path d="M64 66 L38 128 Q35 138 38 143" stroke="rgba(237,220,202,0.08)" stroke-width="1.2" fill="none"/>
+        <path d="M106 66 L132 128 Q135 138 132 143" stroke="rgba(237,220,202,0.08)" stroke-width="1.2" fill="none"/>
+        <ellipse cx="38" cy="148" rx="7" ry="9" stroke="rgba(237,220,202,0.07)" stroke-width="1" fill="none"/>
+        <ellipse cx="132" cy="148" rx="7" ry="9" stroke="rgba(237,220,202,0.07)" stroke-width="1" fill="none"/>
+        <path d="M74 155 L68 222 L66 262" stroke="rgba(237,220,202,0.09)" stroke-width="1.2" fill="none"/>
+        <path d="M96 155 L102 222 L104 262" stroke="rgba(237,220,202,0.09)" stroke-width="1.2" fill="none"/>
+        <ellipse cx="66" cy="267" rx="12" ry="7" stroke="rgba(237,220,202,0.07)" stroke-width="1" fill="none"/>
+        <ellipse cx="104" cy="267" rx="12" ry="7" stroke="rgba(237,220,202,0.07)" stroke-width="1" fill="none"/>
+      </svg>
+    </div>
+    <div id="arrive-msg" style="opacity:0.6"> </div>
+  </div>
+
+  <!-- ── SENSING ── -->
+  <div id="s-sense" class="screen">
+    <div class="phase-dots">
+      <div class="pdot done"></div>
+      <div class="pdot current"></div>
+      <div class="pdot"></div>
+      <div class="pdot"></div>
+    </div>
+    <div class="phase-label">🌿 Sensing</div>
+    <div class="phase-title">Being in the Day</div>
+    <div class="phase-prompt">"Where are you right now, in your body?"</div>
+
+    <div class="sliders-wrap">
+      <div class="s-row">
+        <div class="s-labels"><span class="s-label">Heavy</span><span class="s-label">Light</span></div>
+        <input type="range" id="sl-weight" min="0" max="100" value="50" oninput="refreshGuidance()">
+      </div>
+      <div class="s-row">
+        <div class="s-labels"><span class="s-label">Tight</span><span class="s-label">Open</span></div>
+        <input type="range" id="sl-tension" min="0" max="100" value="50" oninput="refreshGuidance()">
+      </div>
+      <div class="s-row">
+        <div class="s-labels"><span class="s-label">Restless</span><span class="s-label">Calm</span></div>
+        <input type="range" id="sl-calm" min="0" max="100" value="50" oninput="refreshGuidance()">
+      </div>
+    </div>
+
+    <div id="guidance-txt">Notice how each position feels as you settle.</div>
+    <button class="btn" onclick="goRelease()">Continue</button>
+  </div>
+
+  <!-- ── RELEASING ── -->
+  <div id="s-release" class="screen">
+    <div class="phase-dots">
+      <div class="pdot done"></div>
+      <div class="pdot done"></div>
+      <div class="pdot current"></div>
+      <div class="pdot"></div>
+    </div>
+    <div class="phase-label">🌙 Releasing</div>
+    <div class="phase-title">Letting Go</div>
+    <div id="breath-wrap">
+      <div id="breath-ring"></div>
+      <div id="breath-orb"></div>
+    </div>
+    <div id="breath-word">Follow the orb</div>
+    <div id="breath-tally">3 breaths to release</div>
+    <div class="phase-prompt" style="margin-bottom:0">"What is ready to soften?"</div>
+  </div>
+
+  <!-- ── RETURNING ── -->
+  <div id="s-return" class="screen">
+    <div class="phase-dots">
+      <div class="pdot done"></div>
+      <div class="pdot done"></div>
+      <div class="pdot done"></div>
+      <div class="pdot current"></div>
+    </div>
+    <div class="phase-label">🌌 Returning</div>
+    <div class="rt-line" id="rt0">You are here.</div>
+    <div class="rt-line" id="rt1">Your body is listening.</div>
+    <div class="rt-line" id="rt2">This is enough.</div>
+    <div class="rt-sub"  id="rt3">"Can you rest in yourself?"</div>
+    <button class="btn" id="btn-here" onclick="goComplete()">I am here</button>
+  </div>
+
+  <!-- ── COMPLETE ── -->
+  <div id="s-complete" class="screen">
+    <div class="eyebrow">✦ moment of return</div>
+    <div id="moments-num">1</div>
+    <div class="moments-sub">moments of return</div>
+    <div id="constellation"></div>
+    <div id="complete-msg">You came back. That is all that is needed.</div>
+    <button class="btn" onclick="goArrive()">Return Again</button>
+    <button class="btn btn-ghost" onclick="goStart()">Rest Here</button>
+  </div>
+
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+// CANVAS ATMOSPHERE
+// ═══════════════════════════════════════════════════════
+
+const cv = document.getElementById('c');
+const cx = cv.getContext('2d');
+let W, H, tick = 0;
+
+function resize() {
+  W = cv.width  = window.innerWidth;
+  H = cv.height = window.innerHeight;
+}
+window.addEventListener('resize', resize);
+resize();
+
+// Floating motes
+class Mote {
+  constructor(scatter) {
+    this.init(scatter);
+  }
+  init(scatter) {
+    this.x  = Math.random() * W;
+    this.y  = scatter ? Math.random() * H : H + 10;
+    this.r  = Math.random() * 2 + 0.4;
+    this.vy = -(Math.random() * 0.35 + 0.08);
+    this.vx = (Math.random() - 0.5) * 0.18;
+    this.a  = Math.random() * 0.35 + 0.04;
+    this.warm = Math.random() > 0.45;
+  }
+  tick() {
+    this.y += this.vy;
+    this.x += this.vx;
+    if (this.y < -8) this.init(false);
+  }
+  draw() {
+    cx.save();
+    cx.globalAlpha = this.a;
+    cx.fillStyle   = this.warm ? '#c9a87c' : '#8272d4';
+    cx.beginPath();
+    cx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+    cx.fill();
+    cx.restore();
+  }
+}
+
+const motes = Array.from({length: 55}, (_, i) => new Mote(i < 30));
+
+// Ripple pool
+const ripples = [];
+function spawnRipple(x, y, col) {
+  ripples.push({ x, y, r: 8, max: 100, a: 0.45, col: col || '#c9a87c' });
+}
+
+// State-aware glow colour
+const GLOW = {
+  start:    [201, 116, 122],
+  arrive:   [201, 168, 124],
+  sense:    [ 78, 205, 196],
+  release:  [130, 114, 212],
+  return:   [220, 180, 130],
+  complete: [201, 168, 124],
+};
+let curGlow = [201, 116, 122];
+let tgtGlow = [201, 116, 122];
+
+function lerpGlow(a, b, t) {
+  return a.map((v, i) => v + (b[i] - v) * t);
+}
+
+function drawAtmos() {
+  cx.fillStyle = '#08080f';
+  cx.fillRect(0, 0, W, H);
+
+  const bx = W * 0.5, by = H * 0.5;
+  const breath = 0.5 + 0.5 * Math.sin(tick * 0.0005 * Math.PI);
+  const gr = 180 + breath * 70;
+
+  curGlow = lerpGlow(curGlow, tgtGlow, 0.012);
+  const [r, g, b] = curGlow.map(Math.round);
+
+  const grad = cx.createRadialGradient(bx, by, 0, bx, by, gr);
+  grad.addColorStop(0,   `rgba(${r},${g},${b},0.07)`);
+  grad.addColorStop(0.5, `rgba(${r},${g},${b},0.03)`);
+  grad.addColorStop(1,   'rgba(0,0,0,0)');
+  cx.fillStyle = grad;
+  cx.beginPath();
+  cx.arc(bx, by, gr, 0, Math.PI * 2);
+  cx.fill();
+
+  motes.forEach(m => { m.tick(); m.draw(); });
+
+  // Ripples
+  for (let i = ripples.length - 1; i >= 0; i--) {
+    const rp = ripples[i];
+    cx.save();
+    cx.globalAlpha  = rp.a;
+    cx.strokeStyle  = rp.col;
+    cx.lineWidth    = 0.8;
+    cx.beginPath();
+    cx.arc(rp.x, rp.y, rp.r, 0, Math.PI * 2);
+    cx.stroke();
+    cx.restore();
+    rp.r += 1.4;
+    rp.a *= 0.955;
+    if (rp.a < 0.01) ripples.splice(i, 1);
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+// BODY SOMA POINTS
+// ═══════════════════════════════════════════════════════
+
+// [id, top%, left%, message]
+const POINTS = [
+  ['crown',  '5%',  '50%', 'Your mind, arriving.'],
+  ['throat', '19%', '50%', 'Your voice, softening.'],
+  ['heart',  '32%', '50%', 'Your heart, feeling.'],
+  ['belly',  '50%', '50%', 'Your center, grounding.'],
+  ['lhand',  '50%', '16%', 'Your hands, open.'],
+  ['rhand',  '50%', '84%', 'Your hands, open.'],
+  ['hips',   '63%', '50%', 'Your base, settling.'],
+  ['feet',   '92%', '50%', 'Your roots, meeting earth.'],
+];
+
+const LIT = new Set();
+
+function buildPoints() {
+  const wrap = document.getElementById('body-wrap');
+  wrap.querySelectorAll('.sp').forEach(el => el.remove());
+
+  POINTS.forEach(([id, top, left, msg]) => {
+    const el = document.createElement('div');
+    el.className = 'sp';
+    el.id = 'sp-' + id;
+    el.style.top  = top;
+    el.style.left = left;
+
+    function tap(e) {
+      e.stopPropagation();
+      lightPoint(id, msg);
+    }
+    el.addEventListener('click',      tap);
+    el.addEventListener('touchstart', e => { e.preventDefault(); tap(e); }, {passive:false});
+    wrap.appendChild(el);
+  });
+}
+
+function lightPoint(id, msg) {
+  // hands: light both
+  const targets = (id === 'lhand' || id === 'rhand') ? ['lhand','rhand'] : [id];
+  targets.forEach(tid => {
+    LIT.add(tid);
+    const el = document.getElementById('sp-' + tid);
+    if (el) el.classList.add('lit');
+  });
+
+  const msgEl = document.getElementById('arrive-msg');
+  msgEl.style.opacity = '1';
+  msgEl.textContent   = msg;
+
+  spawnRipple(W/2, H/2, '#c9a87c');
+
+  // check completion (need 5 unique soma areas: crown/throat/heart/belly/hands/hips/feet)
+  const areas = new Set([...LIT].map(x => (x==='lhand'||x==='rhand') ? 'hands' : x));
+  if (areas.size >= 5) {
+    setTimeout(() => {
+      msgEl.textContent = 'You have arrived.';
+      setTimeout(goSense, 1500);
+    }, 600);
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+// GUIDANCE MESSAGES
+// ═══════════════════════════════════════════════════════
+
+const GUIDANCE = [
+  [[0,35],  null,    [0,40],   "Your body is asking for gentleness. Allow yourself to be heavy."],
+  [[0,40],  [0,38],  null,     "Heaviness and tightness are here. Notice them without needing them to change."],
+  [null,    [0,32],  [0,38],   "A tightness is present. Breathe into it — no need to force it open."],
+  [null,    null,    [0,35],   "Restlessness is seeking stillness. You don't have to chase it."],
+  [[60,100],[60,100],[60,100], "Your body feels open and light. A good day to breathe deep."],
+  [[62,100],[60,100],null,     "Something is opening. Allow that expansion."],
+  [null,    null,    [65,100], "Calm is available to you right now."],
+  [[0,50],  null,    [0,50],   "Your body is asking for grounding. Feel your weight settle."],
+  [null,    [55,100],[0,45],   "Notice the contrast — openness with restlessness. Both are welcome."],
+  [[40,60], [40,60], [40,60],  "You are exactly where you need to be."],
+];
+
+function refreshGuidance() {
+  const w = +document.getElementById('sl-weight').value;
+  const t = +document.getElementById('sl-tension').value;
+  const c = +document.getElementById('sl-calm').value;
+
+  let msg = "Notice what is present. There is no wrong answer.";
+  for (const [wr, tr, cr, m] of GUIDANCE) {
+    const wOk = !wr || (w >= wr[0] && w <= wr[1]);
+    const tOk = !tr || (t >= tr[0] && t <= tr[1]);
+    const cOk = !cr || (c >= cr[0] && c <= cr[1]);
+    if (wOk && tOk && cOk) { msg = m; break; }
+  }
+
+  const el = document.getElementById('guidance-txt');
+  el.style.opacity = '0';
+  setTimeout(() => { el.textContent = msg; el.style.opacity = '1'; }, 280);
+}
+
+// ═══════════════════════════════════════════════════════
+// BREATHING SEQUENCE
+// ═══════════════════════════════════════════════════════
+
+let breathT   = null;
+let breathN   = 0;
+const BREATHS = 3;
+
+function startBreath() {
+  breathN = 0;
+  setTimeout(doBreath, 800);
+}
+
+function doBreath() {
+  if (breathN >= BREATHS) {
+    document.getElementById('breath-word').textContent  = 'Released.';
+    document.getElementById('breath-tally').textContent = '✦  ✦  ✦';
+    const orb = document.getElementById('breath-orb');
+    orb.style.transition  = 'transform 1.2s ease';
+    orb.style.transform   = 'scale(1)';
+    orb.style.boxShadow   = '0 0 35px rgba(130,114,212,0.3)';
+    setTimeout(goReturn, 2200);
+    return;
+  }
+
+  const left = BREATHS - breathN;
+  document.getElementById('breath-tally').textContent =
+    left === 3 ? '3 breaths to release' :
+    left === 2 ? '2 breaths left' : '1 breath left';
+
+  const orb = document.getElementById('breath-orb');
+
+  // INHALE 4s
+  document.getElementById('breath-word').textContent = 'breathe in…';
+  orb.style.transition = 'transform 4s cubic-bezier(0.4,0,0.2,1), box-shadow 4s ease';
+  orb.style.transform  = 'scale(1.72)';
+  orb.style.boxShadow  = '0 0 55px rgba(130,114,212,0.55)';
+
+  breathT = setTimeout(() => {
+    // HOLD 1s
+    document.getElementById('breath-word').textContent = 'hold…';
+    orb.style.transition = 'transform 0.3s ease';
+
+    breathT = setTimeout(() => {
+      // EXHALE 5s
+      document.getElementById('breath-word').textContent = 'breathe out…';
+      orb.style.transition = 'transform 5s cubic-bezier(0.4,0,0.2,1), box-shadow 5s ease';
+      orb.style.transform  = 'scale(0.82)';
+      orb.style.boxShadow  = '0 0 14px rgba(130,114,212,0.15)';
+
+      breathT = setTimeout(() => {
+        breathN++;
+        doBreath();
+      }, 5000);
+    }, 1000);
+  }, 4000);
+}
+
+// ═══════════════════════════════════════════════════════
+// RETURNING SEQUENCE
+// ═══════════════════════════════════════════════════════
+
+function startReturn() {
+  const lines = ['rt0','rt1','rt2','rt3'];
+  lines.forEach((id, i) => {
+    setTimeout(() => {
+      const el = document.getElementById(id);
+      if (el) el.style.opacity = '1';
+    }, i * 2000 + 600);
+  });
+  setTimeout(() => {
+    const btn = document.getElementById('btn-here');
+    btn.style.opacity       = '1';
+    btn.style.pointerEvents = 'auto';
+  }, lines.length * 2000 + 800);
+}
+
+function resetReturn() {
+  ['rt0','rt1','rt2','rt3'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.opacity = '0';
+  });
+  const btn = document.getElementById('btn-here');
+  btn.style.opacity       = '0';
+  btn.style.pointerEvents = 'none';
+}
+
+// ═══════════════════════════════════════════════════════
+// PERSISTENCE & COMPLETION
+// ═══════════════════════════════════════════════════════
+
+let moments = parseInt(localStorage.getItem('soma_m') || '0');
+
+function recordMoment() {
+  moments++;
+  localStorage.setItem('soma_m', String(moments));
+}
+
+function renderConstellation() {
+  const el  = document.getElementById('constellation');
+  el.innerHTML = '';
+  const show = Math.min(moments, 28);
+  for (let i = 0; i < show; i++) {
+    const d = document.createElement('div');
+    d.className = 'cdot' + (i < moments ? ' on' : '');
+    el.appendChild(d);
+  }
+  document.getElementById('moments-num').textContent = moments;
+
+  const msgs = [
+    "You came back. That is all that is needed.",
+    "Each time you return, you know yourself a little more.",
+    "Your body remembers being listened to.",
+    "This is the practice — coming home to yourself.",
+    "You are building a relationship with your own presence.",
+    "The more you return, the easier the path feels.",
+  ];
+  document.getElementById('complete-msg').textContent = msgs[(moments - 1) % msgs.length];
+}
+
+// ═══════════════════════════════════════════════════════
+// SCREEN ROUTING
+// ═══════════════════════════════════════════════════════
+
+const SCREENS = ['s-start','s-arrive','s-sense','s-release','s-return','s-complete'];
+const GLOWS   = { 's-start': 'start', 's-arrive': 'arrive', 's-sense': 'sense', 's-release': 'release', 's-return': 'return', 's-complete': 'complete' };
+
+function show(id) {
+  SCREENS.forEach(s => document.getElementById(s).classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  tgtGlow = GLOW[GLOWS[id]] || GLOW.start;
+}
+
+function goStart() {
+  show('s-start');
+}
+
+function goArrive() {
+  LIT.clear();
+  buildPoints();
+  document.getElementById('arrive-msg').textContent = ' ';
+  document.getElementById('arrive-msg').style.opacity = '0.6';
+  show('s-arrive');
+}
+
+function goSense() {
+  document.getElementById('sl-weight').value  = 50;
+  document.getElementById('sl-tension').value = 50;
+  document.getElementById('sl-calm').value    = 50;
+  document.getElementById('guidance-txt').textContent = 'Notice what is present. There is no wrong answer.';
+  show('s-sense');
+}
+
+function goRelease() {
+  if (breathT) { clearTimeout(breathT); breathT = null; }
+  show('s-release');
+  startBreath();
+}
+
+function goReturn() {
+  resetReturn();
+  show('s-return');
+  startReturn();
+}
+
+function goComplete() {
+  recordMoment();
+  renderConstellation();
+  spawnRipple(W/2, H/2, '#c9a87c');
+  spawnRipple(W/2, H/2, '#8272d4');
+  show('s-complete');
+}
+
+function peekMoments() {
+  const el = document.getElementById('btn-peek');
+  if (moments === 0) {
+    el.textContent = 'No moments yet — begin your first ✦';
+  } else {
+    el.textContent = moments === 1 ? '1 moment of return ✦' : `${moments} moments of return ✦`;
+  }
+  setTimeout(() => { el.textContent = 'Your moments of return'; }, 2800);
+}
+
+// ═══════════════════════════════════════════════════════
+// RENDER LOOP
+// ═══════════════════════════════════════════════════════
+
+function loop(ts) {
+  tick = ts;
+  drawAtmos();
+  requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>
