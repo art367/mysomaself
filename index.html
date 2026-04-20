@@ -7,322 +7,306 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{
-  --bg:#0a0a12;
-  --text:#e8e0d5;
-  --muted:#9a9080;
-  --card:rgba(255,255,255,0.06);
-  --root:#c0392b;
-  --sacral:#e67e22;
-  --solar:#f1c40f;
-  --heart:#27ae60;
-  --throat:#1abc9c;
-  --thirdeye:#2980b9;
-  --crown:#8e44ad;
+  --bg1:#fef9f4;--bg2:#f0eafa;--bg3:#e8f6f8;
+  --text:#2d2218;--muted:#7a6a60;--soft:#b0a090;
+  --card:rgba(255,255,255,0.78);
+  --root:#e74c3c;--sacral:#f39c12;--solar:#f1c40f;
+  --heart:#2ecc71;--throat:#1abc9c;--thirdeye:#3498db;--crown:#9b59b6;
 }
-html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);font-family:'Georgia',serif;color:var(--text)}
+html,body{width:100%;height:100%;overflow:hidden;font-family:'Georgia',serif;color:var(--text)}
+body{background:linear-gradient(160deg,var(--bg1) 0%,var(--bg3) 50%,var(--bg2) 100%)}
 canvas#bg{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none}
 
 /* SCREENS */
-.screen{position:fixed;inset:0;z-index:10;display:none;flex-direction:column;align-items:center;justify-content:center;padding:24px;overflow-y:auto}
+.screen{position:fixed;inset:0;z-index:10;display:none;flex-direction:column;align-items:center;justify-content:flex-start;padding:20px 16px 40px;overflow-y:auto}
 .screen.active{display:flex}
 
-/* TYPOGRAPHY */
-h1{font-size:clamp(1.6rem,5vw,2.4rem);font-weight:300;letter-spacing:.12em;text-align:center;margin-bottom:.4em}
-h2{font-size:clamp(1.1rem,4vw,1.6rem);font-weight:300;letter-spacing:.08em;text-align:center;margin-bottom:.6em}
-p{font-size:clamp(.85rem,2.5vw,1rem);line-height:1.75;text-align:center;color:var(--muted);max-width:480px;margin:0 auto .8em}
-.tagline{font-size:clamp(.75rem,2vw,.9rem);letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:2em}
+/* TYPE */
+h1{font-size:clamp(1.8rem,6vw,2.6rem);font-weight:300;letter-spacing:.12em;text-align:center;margin-bottom:.3em;color:var(--text)}
+h2{font-size:clamp(1.1rem,4vw,1.6rem);font-weight:300;letter-spacing:.08em;text-align:center;margin-bottom:.5em;color:var(--text)}
+p{font-size:clamp(.85rem,2.5vw,1rem);line-height:1.8;text-align:center;color:var(--muted);max-width:460px;margin:0 auto .7em}
+.tagline{font-size:clamp(.7rem,2vw,.82rem);letter-spacing:.22em;text-transform:uppercase;color:var(--soft);margin-bottom:1.6em}
+.affirmation{font-size:1rem;font-style:italic;color:var(--text);text-align:center;margin:1em auto;padding:.8em 1.2em;border-left:3px solid rgba(155,89,182,.3);max-width:420px;line-height:1.7}
 
 /* BUTTONS */
-.btn{display:inline-block;padding:.75em 2em;border:1px solid rgba(255,255,255,.25);border-radius:40px;background:rgba(255,255,255,.07);color:var(--text);font-size:.9rem;letter-spacing:.1em;cursor:pointer;transition:all .3s;text-align:center;margin:.4em}
-.btn:hover{background:rgba(255,255,255,.15);border-color:rgba(255,255,255,.5)}
-.btn.primary{background:rgba(255,255,255,.15);border-color:rgba(255,255,255,.4)}
-.btn-row{display:flex;flex-wrap:wrap;justify-content:center;gap:.5em;margin-top:1em}
+.btn{display:inline-block;padding:.7em 1.8em;border:1.5px solid rgba(0,0,0,.12);border-radius:40px;background:var(--card);color:var(--text);font-size:.88rem;letter-spacing:.08em;cursor:pointer;transition:all .25s;text-align:center;margin:.35em;backdrop-filter:blur(6px);box-shadow:0 2px 12px rgba(0,0,0,.07)}
+.btn:hover{background:rgba(255,255,255,.95);box-shadow:0 4px 20px rgba(0,0,0,.12);transform:translateY(-1px)}
+.btn.primary{background:linear-gradient(135deg,rgba(155,89,182,.2),rgba(52,152,219,.2));border-color:rgba(155,89,182,.3);color:var(--text)}
+.btn.primary:hover{background:linear-gradient(135deg,rgba(155,89,182,.3),rgba(52,152,219,.3))}
+.btn-row{display:flex;flex-wrap:wrap;justify-content:center;gap:.4em;margin-top:.8em}
 
 /* CARD */
-.card{background:var(--card);border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:1.5em;max-width:480px;width:100%;margin:.6em auto;backdrop-filter:blur(8px)}
-.card p{margin-bottom:.5em}
+.card{background:var(--card);border:1px solid rgba(255,255,255,.9);border-radius:20px;padding:1.3em 1.5em;max-width:460px;width:100%;margin:.5em auto;backdrop-filter:blur(10px);box-shadow:0 4px 24px rgba(0,0,0,.06)}
+.card-title{font-size:.9rem;color:var(--text);margin-bottom:.5em;font-weight:400}
 
-/* CHAKRA ARC */
-#arc-wrap{width:100%;max-width:520px;margin:0 auto;position:relative}
-#arc-svg{width:100%;height:auto;display:block}
-.chakra-orb{cursor:pointer;transition:transform .2s}
-.chakra-orb:hover{transform:scale(1.2)}
-.orb-label{font-size:11px;fill:rgba(255,255,255,.7);text-anchor:middle;pointer-events:none}
-.time-label{font-size:10px;fill:rgba(255,255,255,.4);text-anchor:middle}
+/* LOTUS FIGURE */
+#lotus-wrap{width:100%;max-width:300px;margin:0 auto;position:relative}
+#lotus-svg{width:100%;height:auto;display:block;filter:drop-shadow(0 8px 24px rgba(155,89,182,.15))}
 
-/* PULSE ANIMATION */
-@keyframes pulse{0%,100%{opacity:1;r:16}50%{opacity:.6;r:20}}
-@keyframes outerPulse{0%,100%{opacity:.3;r:28}50%{opacity:.05;r:36}}
-.orb-active circle.inner{animation:pulse 2s ease-in-out infinite}
-.orb-active circle.outer{animation:outerPulse 2s ease-in-out infinite}
-
-/* BODY SCAN */
-#body-wrap{position:relative;width:160px;margin:0 auto}
-#body-svg{width:160px}
-.soma-pt{cursor:pointer;transition:all .3s}
-.soma-pt:hover circle{r:9;opacity:1}
-.soma-pt.pain circle{fill:#e74c3c!important;animation:pulse 1.5s infinite}
-.soma-msg{font-size:.85rem;color:var(--throat);text-align:center;min-height:1.4em;margin:.6em 0;font-style:italic}
+/* CHAKRA ORB ON FIGURE */
+.chakra-pt{cursor:pointer;transition:transform .2s}
+.chakra-pt:hover{transform:scale(1.3)}
+.chakra-pt.active-chakra .orb-inner{filter:url(#glow)}
+@keyframes pulseOrb{0%,100%{r:10;opacity:1}50%{r:14;opacity:.7}}
+@keyframes pulseOuter{0%,100%{r:22;opacity:.25}50%{r:30;opacity:.05}}
+.chakra-pt.active-chakra .orb-inner{animation:pulseOrb 2s ease-in-out infinite}
+.chakra-pt.active-chakra .orb-outer{animation:pulseOuter 2s ease-in-out infinite}
 
 /* BREATH RING */
-#breath-ring{width:120px;height:120px;margin:1em auto;border-radius:50%;border:2px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:.85rem;color:var(--muted);transition:all 1s ease}
-#breath-ring.inhale{transform:scale(1.3);border-color:rgba(255,255,255,.6);color:var(--text)}
-#breath-ring.exhale{transform:scale(.85);border-color:rgba(255,255,255,.15)}
+.breath-ring{width:110px;height:110px;border-radius:50%;border:2px solid rgba(155,89,182,.3);margin:1em auto;display:flex;align-items:center;justify-content:center;font-size:.82rem;color:var(--muted);transition:all 1.5s ease;background:radial-gradient(circle,rgba(255,255,255,.6),transparent)}
+.breath-ring.inhale{transform:scale(1.35);border-color:rgba(155,89,182,.7);color:var(--text);background:radial-gradient(circle,rgba(155,89,182,.1),transparent)}
+.breath-ring.exhale{transform:scale(.82);border-color:rgba(155,89,182,.15)}
 
-/* FADE ANIMATIONS */
-@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
-.fade-up{animation:fadeUp .8s ease forwards}
-.delay-1{animation-delay:.4s;opacity:0}
-.delay-2{animation-delay:.8s;opacity:0}
-.delay-3{animation-delay:1.2s;opacity:0}
-.delay-4{animation-delay:1.6s;opacity:0}
+/* PRACTICE HEADER */
+.practice-orb{width:80px;height:80px;border-radius:50%;margin:1em auto;display:flex;align-items:center;justify-content:center;font-size:2rem;box-shadow:0 0 40px currentColor}
+
+/* ANIMATIONS */
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.fade-up{animation:fadeUp .7s ease forwards}
+.d1{animation-delay:.3s;opacity:0}.d2{animation-delay:.7s;opacity:0}.d3{animation-delay:1.1s;opacity:0}.d4{animation-delay:1.5s;opacity:0}
 
 /* TIPS */
-.tip-chip{display:inline-block;padding:.4em 1em;border-radius:30px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);font-size:.78rem;color:var(--muted);margin:.25em;cursor:default}
+.tip-chip{display:inline-block;padding:.38em .9em;border-radius:30px;background:rgba(255,255,255,.7);border:1px solid rgba(0,0,0,.08);font-size:.76rem;color:var(--muted);margin:.22em}
 
-/* MOMENTS BADGE */
-#moments-badge{position:fixed;top:14px;right:16px;z-index:99;font-size:.72rem;color:var(--muted);letter-spacing:.1em}
+/* MED TIMER */
+.med-timer{font-size:3rem;font-weight:200;letter-spacing:.1em;color:var(--text);margin:.5em 0;text-align:center}
 
-/* BACK */
-#back-btn{position:fixed;top:14px;left:16px;z-index:99;font-size:.75rem;color:var(--muted);cursor:pointer;letter-spacing:.1em;display:none}
+/* STEP LIST */
+.step-list{list-style:none;text-align:left;max-width:380px;margin:.5em auto}
+.step-list li{padding:.55em .2em;border-bottom:1px solid rgba(0,0,0,.06);font-size:.87rem;color:var(--muted);cursor:pointer;transition:color .2s}
+.step-list li::before{content:"○  ";color:var(--throat)}
+.step-list li.done{color:var(--heart)}.step-list li.done::before{content:"●  "}
+
+/* TOP UI */
+#moments-badge{position:fixed;top:13px;right:15px;z-index:99;font-size:.72rem;color:var(--soft);letter-spacing:.1em}
+#back-btn{position:fixed;top:13px;left:15px;z-index:99;font-size:.75rem;color:var(--soft);cursor:pointer;letter-spacing:.1em;display:none}
 #back-btn:hover{color:var(--text)}
-
-/* AUDIO TOGGLE */
-#audio-toggle{position:fixed;bottom:16px;right:16px;z-index:99;font-size:.75rem;color:var(--muted);cursor:pointer;letter-spacing:.1em}
+#audio-toggle{position:fixed;bottom:15px;right:15px;z-index:99;font-size:.75rem;color:var(--soft);cursor:pointer;letter-spacing:.1em;padding:.4em .8em;border-radius:20px;background:var(--card);border:1px solid rgba(0,0,0,.08);backdrop-filter:blur(6px)}
 #audio-toggle:hover{color:var(--text)}
 
-/* AFFIRMATION */
-.affirmation{font-size:1.05rem;font-style:italic;color:var(--text);text-align:center;margin:1em 0;padding:1em;border-left:2px solid rgba(255,255,255,.2)}
+/* SCROLL */
+.scroll-inner{width:100%;max-width:500px;margin:0 auto;padding-bottom:50px}
 
-/* SAUNA / LYMPH */
-.step-list{list-style:none;text-align:left;max-width:400px;margin:0 auto}
-.step-list li{padding:.5em 0;border-bottom:1px solid rgba(255,255,255,.06);font-size:.88rem;color:var(--muted)}
-.step-list li::before{content:"○  ";color:var(--throat)}
-.step-list li.done::before{content:"●  ";color:var(--heart)}
-.step-list li{cursor:pointer}
-
-/* PAIN RELEASE */
-#pain-breath{width:100px;height:100px;border-radius:50%;background:radial-gradient(circle,rgba(231,76,60,.3),transparent 70%);margin:1em auto;display:flex;align-items:center;justify-content:center;font-size:.8rem;color:var(--text)}
-
-/* MEDITATION */
-.med-timer{font-size:3rem;font-weight:200;letter-spacing:.1em;color:var(--text);margin:.5em 0}
-
-/* SCROLL helper */
-.scroll-inner{width:100%;max-width:520px;margin:0 auto;padding-bottom:40px}
-
-/* CHAKRA DETAIL HEADER */
-.chakra-header{width:80px;height:80px;border-radius:50%;margin:0 auto 1em;display:flex;align-items:center;justify-content:center;font-size:2rem;box-shadow:0 0 40px currentColor}
+/* SLIDERS */
+input[type=range]{-webkit-appearance:none;width:100%;height:4px;border-radius:2px;background:rgba(155,89,182,.2);outline:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--crown);cursor:pointer;box-shadow:0 0 8px rgba(155,89,182,.4)}
 </style>
 </head>
 <body>
 <canvas id="bg"></canvas>
 <div id="moments-badge">✦ <span id="m-count">0</span> returns</div>
 <div id="back-btn" onclick="goBack()">← back</div>
-<div id="audio-toggle" onclick="toggleAudio()">♪ sound off</div>
+<div id="audio-toggle" onclick="toggleAudio()">♪ sounds</div>
 
-<!-- ═══════════════════════════════════════════════════
-     SCREEN: START
-═══════════════════════════════════════════════════ -->
-<div id="s-start" class="screen active">
+<!-- START -->
+<div id="s-start" class="screen" style="justify-content:center">
   <p class="tagline">not self-improvement · self-return</p>
   <h1>MySomaSelf</h1>
-  <p>Your body is not a problem to fix.<br>It's a home to return to.</p>
-  <div class="btn-row">
+  <p>Your body is not a problem to fix.<br>It is a home to return to.</p>
+  <div class="btn-row" style="margin-top:1.4em">
     <div class="btn primary" onclick="show('s-chakra')">Begin the Journey</div>
     <div class="btn" onclick="show('s-meditate')">Just Meditate</div>
     <div class="btn" onclick="show('s-sauna')">Wellness Session Prep</div>
   </div>
-  <p style="margin-top:2em;font-size:.78rem">What would you like today?</p>
+  <p style="margin-top:2em;font-size:.76rem;letter-spacing:.1em">✦ touch · breathe · return ✦</p>
 </div>
 
-<!-- ═══════════════════════════════════════════════════
-     SCREEN: CHAKRA ARC HOME
-═══════════════════════════════════════════════════ -->
+<!-- CHAKRA LOTUS HOME -->
 <div id="s-chakra" class="screen">
   <div class="scroll-inner">
-    <p class="tagline">dawn to dusk · your energy map</p>
+    <p class="tagline">dawn to dusk · your energy body</p>
     <h2 id="chakra-greeting">Good morning</h2>
-    <p id="chakra-subtitle">Your body is tuned to the rhythm of the day.</p>
-    <div id="arc-wrap">
-      <svg id="arc-svg" viewBox="0 0 520 300" xmlns="http://www.w3.org/2000/svg">
-        <!-- Arc path -->
-        <path d="M 40 270 Q 260 20 480 270" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1.5"/>
-        <!-- Chakra orbs will be injected by JS -->
-        <g id="chakra-orbs"></g>
-        <!-- Time indicator -->
-        <line id="time-needle" x1="260" y1="260" x2="260" y2="240" stroke="rgba(255,255,255,0.3)" stroke-width="1" stroke-dasharray="4,3"/>
+    <p id="chakra-subtitle" style="margin-bottom:.8em">Tap the glowing chakra to begin your practice.</p>
+    <div id="lotus-wrap">
+      <svg id="lotus-svg" viewBox="0 0 300 480" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="6" result="blur"/>
+            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+          <filter id="softglow" x="-30%" y="-30%" width="160%" height="160%">
+            <feGaussianBlur stdDeviation="3" result="blur"/>
+            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+        </defs>
+
+        <!-- LOTUS FLOWER petals -->
+        <g opacity="0.18" fill="none" stroke="rgba(155,89,182,0.6)" stroke-width="1">
+          <ellipse cx="150" cy="420" rx="55" ry="28" transform="rotate(-30 150 420)"/>
+          <ellipse cx="150" cy="420" rx="55" ry="28" transform="rotate(0 150 420)"/>
+          <ellipse cx="150" cy="420" rx="55" ry="28" transform="rotate(30 150 420)"/>
+          <ellipse cx="150" cy="420" rx="55" ry="28" transform="rotate(60 150 420)"/>
+          <ellipse cx="150" cy="420" rx="55" ry="28" transform="rotate(-60 150 420)"/>
+          <ellipse cx="150" cy="420" rx="55" ry="28" transform="rotate(90 150 420)"/>
+        </g>
+        <!-- Lotus center -->
+        <circle cx="150" cy="420" r="18" fill="rgba(155,89,182,0.12)" stroke="rgba(155,89,182,0.3)" stroke-width="1"/>
+
+        <!-- BODY OUTLINE — seated crossed-leg figure -->
+        <!-- Head -->
+        <circle cx="150" cy="68" r="28" fill="none" stroke="rgba(100,80,140,0.25)" stroke-width="1.5"/>
+        <!-- Neck -->
+        <line x1="150" y1="96" x2="150" y2="118" stroke="rgba(100,80,140,0.2)" stroke-width="1.5"/>
+        <!-- Torso -->
+        <path d="M 118 118 Q 150 112 182 118 L 186 220 Q 150 228 114 220 Z" fill="none" stroke="rgba(100,80,140,0.22)" stroke-width="1.5"/>
+        <!-- Left arm -->
+        <path d="M 118 130 Q 88 160 76 200" fill="none" stroke="rgba(100,80,140,0.2)" stroke-width="1.5"/>
+        <!-- Right arm -->
+        <path d="M 182 130 Q 212 160 224 200" fill="none" stroke="rgba(100,80,140,0.2)" stroke-width="1.5"/>
+        <!-- Left hand resting on knee -->
+        <circle cx="76" cy="204" r="8" fill="none" stroke="rgba(100,80,140,0.2)" stroke-width="1.5"/>
+        <!-- Right hand -->
+        <circle cx="224" cy="204" r="8" fill="none" stroke="rgba(100,80,140,0.2)" stroke-width="1.5"/>
+        <!-- Crossed legs -->
+        <path d="M 114 220 Q 90 260 72 290 Q 100 310 150 308 Q 200 310 228 290 Q 210 260 186 220" fill="none" stroke="rgba(100,80,140,0.22)" stroke-width="1.5"/>
+        <!-- Left leg detail -->
+        <path d="M 72 290 Q 80 330 110 350 Q 130 360 150 358" fill="none" stroke="rgba(100,80,140,0.18)" stroke-width="1.5"/>
+        <!-- Right leg detail -->
+        <path d="M 228 290 Q 220 330 190 350 Q 170 360 150 358" fill="none" stroke="rgba(100,80,140,0.18)" stroke-width="1.5"/>
+        <!-- Feet crossed -->
+        <ellipse cx="120" cy="358" rx="18" ry="9" fill="none" stroke="rgba(100,80,140,0.18)" stroke-width="1.5"/>
+        <ellipse cx="180" cy="358" rx="18" ry="9" fill="none" stroke="rgba(100,80,140,0.18)" stroke-width="1.5"/>
+        <!-- Centre line / sushumna -->
+        <line x1="150" y1="80" x2="150" y2="360" stroke="rgba(200,180,220,0.2)" stroke-width="1" stroke-dasharray="4,6"/>
+
+        <!-- CHAKRA POINTS — injected by JS -->
+        <g id="chakra-pts"></g>
       </svg>
     </div>
-    <p style="font-size:.8rem;margin-top:-.5em">Tap the glowing chakra to begin your practice</p>
-    <div class="btn-row">
-      <div class="btn" onclick="show('s-bodyscan')">Body Scan First</div>
-      <div class="btn" onclick="show('s-meditate')">Meditate</div>
-    </div>
-    <div style="margin-top:1.2em;display:flex;flex-wrap:wrap;justify-content:center">
+
+    <div style="display:flex;flex-wrap:wrap;justify-content:center;margin:.6em 0">
       <span class="tip-chip">💧 Drink water now</span>
       <span class="tip-chip">☀️ Feel sunlight on your face</span>
       <span class="tip-chip">🌿 Bare feet on grass</span>
     </div>
+    <div class="btn-row">
+      <div class="btn" onclick="show('s-bodyscan')">Body Scan</div>
+      <div class="btn" onclick="show('s-meditate')">Meditate</div>
+      <div class="btn" onclick="show('s-sauna')">Wellness Prep</div>
+    </div>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════
-     SCREEN: CHAKRA PRACTICE (dynamic)
-═══════════════════════════════════════════════════ -->
+<!-- CHAKRA PRACTICE -->
 <div id="s-practice" class="screen">
   <div class="scroll-inner">
-    <div id="practice-header" class="chakra-header">○</div>
+    <div id="practice-orb" class="practice-orb">○</div>
     <h2 id="practice-name">Chakra Practice</h2>
-    <p id="practice-time-label" style="font-size:.8rem;letter-spacing:.15em;text-transform:uppercase"></p>
+    <p id="practice-time-lbl" style="font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;margin-bottom:1em"></p>
+    <div class="card"><p id="practice-intro"></p></div>
+    <div class="affirmation" id="practice-aff"></div>
     <div class="card">
-      <p id="practice-intro"></p>
-    </div>
-    <div class="affirmation" id="practice-affirmation"></div>
-    <div class="card">
-      <p style="color:var(--text);font-size:.9rem;margin-bottom:.5em">Your Practice</p>
+      <p class="card-title">Your Practice</p>
       <p id="practice-body"></p>
     </div>
-    <div id="practice-breath-section">
-      <div id="breath-ring">breathe</div>
-      <p id="breath-label" style="font-size:.8rem;margin-top:.3em"></p>
-    </div>
-    <div class="card" id="practice-tips-card">
-      <p style="color:var(--text);font-size:.9rem;margin-bottom:.5em">✦ Biohack of the moment</p>
+    <div class="breath-ring" id="prac-ring">breathe</div>
+    <p id="prac-breath-lbl" style="font-size:.78rem;text-align:center;color:var(--soft);min-height:1.2em"></p>
+    <div class="card">
+      <p class="card-title">✦ Biohack of the moment</p>
       <p id="practice-tip"></p>
     </div>
     <div class="btn-row">
-      <div class="btn primary" id="practice-breath-btn" onclick="startPracticeBreath()">Start Breathing Practice</div>
-      <div class="btn" onclick="show('s-chakra')">Return to Arc</div>
+      <div class="btn primary" id="prac-start-btn" onclick="startPracticeBreath()">Begin Breathing Practice</div>
+      <div class="btn" onclick="show('s-chakra')">Return to Body</div>
     </div>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════
-     SCREEN: BODY SCAN
-═══════════════════════════════════════════════════ -->
+<!-- BODY SCAN -->
 <div id="s-bodyscan" class="screen">
   <div class="scroll-inner">
-    <p class="tagline">arriving in your body</p>
+    <p class="tagline">arriving · sensing · feeling</p>
     <h2>Body Scan</h2>
-    <p>Touch where you feel sensation — tension, heaviness, or pain.</p>
-    <div id="body-wrap">
-      <svg id="body-svg" viewBox="0 0 160 380" xmlns="http://www.w3.org/2000/svg">
-        <!-- Body silhouette -->
-        <ellipse cx="80" cy="28" rx="22" ry="26" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
-        <rect x="55" y="54" width="50" height="90" rx="12" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
-        <rect x="20" y="58" width="32" height="72" rx="10" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
-        <rect x="108" y="58" width="32" height="72" rx="10" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
-        <rect x="58" y="144" width="44" height="110" rx="10" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
-        <rect x="38" y="255" width="34" height="100" rx="10" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
-        <rect x="88" y="255" width="34" height="100" rx="10" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
-        <!-- Touch points -->
-        <g class="soma-pt" id="pt-head" onclick="scanPoint('head','Your mind, arriving.')">
-          <circle cx="80" cy="28" r="7" fill="rgba(142,68,173,0.4)" stroke="#8e44ad" stroke-width="1.5"/>
-        </g>
-        <g class="soma-pt" id="pt-throat" onclick="scanPoint('throat','Your voice, softening.')">
-          <circle cx="80" cy="58" r="7" fill="rgba(26,188,156,0.4)" stroke="#1abc9c" stroke-width="1.5"/>
-        </g>
-        <g class="soma-pt" id="pt-heart" onclick="scanPoint('heart','Your heart, feeling.')">
-          <circle cx="80" cy="85" r="7" fill="rgba(39,174,96,0.4)" stroke="#27ae60" stroke-width="1.5"/>
-        </g>
-        <g class="soma-pt" id="pt-belly" onclick="scanPoint('belly','Your center, grounding.')">
-          <circle cx="80" cy="115" r="7" fill="rgba(230,126,34,0.4)" stroke="#e67e22" stroke-width="1.5"/>
-        </g>
-        <g class="soma-pt" id="pt-lhand" onclick="scanPoint('lhand','Your hands, open.')">
-          <circle cx="30" cy="118" r="7" fill="rgba(255,255,255,0.2)" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/>
-        </g>
-        <g class="soma-pt" id="pt-rhand" onclick="scanPoint('rhand','Your hands, open.')">
-          <circle cx="130" cy="118" r="7" fill="rgba(255,255,255,0.2)" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/>
-        </g>
-        <g class="soma-pt" id="pt-hips" onclick="scanPoint('hips','Your base, settling.')">
-          <circle cx="80" cy="165" r="7" fill="rgba(192,57,43,0.4)" stroke="#c0392b" stroke-width="1.5"/>
-        </g>
-        <g class="soma-pt" id="pt-feet" onclick="scanPoint('feet','Your roots, meeting earth.')">
-          <circle cx="80" cy="335" r="7" fill="rgba(255,255,255,0.2)" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/>
-        </g>
+    <p>Touch where you notice sensation — tension, heaviness, or pain.</p>
+    <div id="body-wrap" style="position:relative;width:150px;margin:.8em auto">
+      <svg viewBox="0 0 160 380" xmlns="http://www.w3.org/2000/svg" style="width:150px">
+        <ellipse cx="80" cy="28" rx="22" ry="26" fill="rgba(155,89,182,.06)" stroke="rgba(155,89,182,.3)" stroke-width="1.2"/>
+        <rect x="55" y="54" width="50" height="90" rx="12" fill="rgba(155,89,182,.04)" stroke="rgba(155,89,182,.2)" stroke-width="1.2"/>
+        <rect x="20" y="58" width="32" height="72" rx="10" fill="rgba(155,89,182,.04)" stroke="rgba(155,89,182,.18)" stroke-width="1.2"/>
+        <rect x="108" y="58" width="32" height="72" rx="10" fill="rgba(155,89,182,.04)" stroke="rgba(155,89,182,.18)" stroke-width="1.2"/>
+        <rect x="58" y="144" width="44" height="110" rx="10" fill="rgba(155,89,182,.04)" stroke="rgba(155,89,182,.2)" stroke-width="1.2"/>
+        <rect x="38" y="255" width="34" height="100" rx="10" fill="rgba(155,89,182,.04)" stroke="rgba(155,89,182,.18)" stroke-width="1.2"/>
+        <rect x="88" y="255" width="34" height="100" rx="10" fill="rgba(155,89,182,.04)" stroke="rgba(155,89,182,.18)" stroke-width="1.2"/>
+        <g class="soma-pt" onclick="scanPoint('head')"><circle cx="80" cy="28" r="8" fill="rgba(142,68,173,.25)" stroke="#9b59b6" stroke-width="1.5" style="cursor:pointer"/></g>
+        <g class="soma-pt" onclick="scanPoint('throat')"><circle cx="80" cy="58" r="8" fill="rgba(26,188,156,.25)" stroke="#1abc9c" stroke-width="1.5" style="cursor:pointer"/></g>
+        <g class="soma-pt" onclick="scanPoint('heart')"><circle cx="80" cy="85" r="8" fill="rgba(46,204,113,.25)" stroke="#2ecc71" stroke-width="1.5" style="cursor:pointer"/></g>
+        <g class="soma-pt" onclick="scanPoint('belly')"><circle cx="80" cy="115" r="8" fill="rgba(243,156,18,.25)" stroke="#f39c12" stroke-width="1.5" style="cursor:pointer"/></g>
+        <g class="soma-pt" onclick="scanPoint('hips')"><circle cx="80" cy="165" r="8" fill="rgba(231,76,60,.25)" stroke="#e74c3c" stroke-width="1.5" style="cursor:pointer"/></g>
+        <g class="soma-pt" onclick="scanPoint('feet')"><circle cx="80" cy="335" r="8" fill="rgba(155,89,182,.2)" stroke="rgba(155,89,182,.5)" stroke-width="1.5" style="cursor:pointer"/></g>
       </svg>
     </div>
-    <div class="soma-msg" id="soma-msg">Touch a point on your body…</div>
-    <div id="scan-sliders" style="display:none;width:100%;max-width:360px;margin:0 auto">
-      <p style="font-size:.82rem;margin-bottom:.3em">How does this area feel?</p>
+    <div id="soma-msg" style="font-size:.88rem;color:var(--throat);text-align:center;min-height:1.4em;font-style:italic;margin:.5em 0">Touch a point on your body…</div>
+    <div id="scan-sliders" style="display:none;width:100%;max-width:340px;margin:.6em auto">
       <div style="display:flex;align-items:center;gap:.8em;margin:.4em 0">
-        <span style="font-size:.78rem;color:var(--muted);width:60px">Tension</span>
-        <input type="range" id="sl-tension" min="0" max="100" value="50" style="flex:1" oninput="updateScanFeedback()">
-        <span id="sl-tension-val" style="font-size:.78rem;width:30px">50</span>
+        <span style="font-size:.78rem;color:var(--soft);width:52px">Tension</span>
+        <input type="range" id="sl-tension" min="0" max="100" value="50" oninput="updateScan()">
+        <span id="slv-t" style="font-size:.75rem;width:24px">50</span>
       </div>
       <div style="display:flex;align-items:center;gap:.8em;margin:.4em 0">
-        <span style="font-size:.78rem;color:var(--muted);width:60px">Energy</span>
-        <input type="range" id="sl-energy" min="0" max="100" value="50" style="flex:1" oninput="updateScanFeedback()">
-        <span id="sl-energy-val" style="font-size:.78rem;width:30px">50</span>
+        <span style="font-size:.78rem;color:var(--soft);width:52px">Energy</span>
+        <input type="range" id="sl-energy" min="0" max="100" value="50" oninput="updateScan()">
+        <span id="slv-e" style="font-size:.75rem;width:24px">50</span>
       </div>
       <div style="display:flex;align-items:center;gap:.8em;margin:.4em 0">
-        <span style="font-size:.78rem;color:var(--muted);width:60px">Pain</span>
-        <input type="range" id="sl-pain" min="0" max="100" value="0" style="flex:1" oninput="updateScanFeedback()">
-        <span id="sl-pain-val" style="font-size:.78rem;width:30px">0</span>
+        <span style="font-size:.78rem;color:var(--soft);width:52px">Pain</span>
+        <input type="range" id="sl-pain" min="0" max="100" value="0" oninput="updateScan()">
+        <span id="slv-p" style="font-size:.75rem;width:24px">0</span>
       </div>
     </div>
-    <div id="scan-guidance" class="card" style="display:none">
-      <p id="scan-guidance-text"></p>
-    </div>
+    <div id="scan-guide" class="card" style="display:none"><p id="scan-guide-txt"></p></div>
     <div class="btn-row">
-      <div class="btn primary" id="scan-action-btn" style="display:none" onclick="scanAction()">Follow This Guidance</div>
-      <div class="btn" onclick="show('s-chakra')">Return to Arc</div>
+      <div class="btn primary" id="scan-act-btn" style="display:none" onclick="scanAction()">Follow This Guidance</div>
+      <div class="btn" onclick="show('s-chakra')">Return to Body</div>
     </div>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════
-     SCREEN: PAIN RELEASE
-═══════════════════════════════════════════════════ -->
+<!-- PAIN RELEASE -->
 <div id="s-pain" class="screen">
   <div class="scroll-inner">
     <p class="tagline">breath · release · melt</p>
     <h2>Pain Release</h2>
     <p>You are not broken. Your body is holding something.<br>Let's breathe it through together.</p>
-    <div id="pain-breath" class="card" style="text-align:center;padding:2em">
-      <div id="pain-ring" style="width:100px;height:100px;border-radius:50%;border:2px solid rgba(231,76,60,.5);margin:0 auto 1em;display:flex;align-items:center;justify-content:center;font-size:.85rem;color:var(--text);transition:all 1.5s ease">breathe</div>
-      <p id="pain-breath-label" style="font-size:.82rem;min-height:1.2em"></p>
+    <div class="card" style="text-align:center;padding:2em">
+      <div class="breath-ring" id="pain-ring" style="margin:0 auto 1em">breathe</div>
+      <p id="pain-lbl" style="font-size:.8rem;color:var(--soft);min-height:1.2em"></p>
     </div>
     <div class="card">
-      <p style="color:var(--text);font-size:.9rem;margin-bottom:.5em">Tension Melt Practice</p>
-      <p>Place one hand gently on the area of pain or tension. Breathe in slowly through your nose for 4 counts. At the top, hold — feel the breath press gently into that space. Exhale slowly for 6 counts, imagining the tension softening like warm wax.</p>
+      <p class="card-title">Tension Melt Practice</p>
+      <p>Place one hand gently on the area of pain. Breathe in through your nose for 4 counts. At the top, hold — feel the breath press gently into that space. Exhale for 6 counts, imagining the tension softening like warm wax melting away.</p>
     </div>
     <div class="affirmation">My body is safe. I allow this to soften. I am more than this sensation.</div>
     <div class="card">
-      <p style="color:var(--text);font-size:.9rem;margin-bottom:.5em">Body Dialogue</p>
-      <p>Ask the pain: <em>What are you protecting?</em> You don't need an answer. Just the willingness to listen often begins the release.</p>
+      <p class="card-title">Body Dialogue</p>
+      <p>Ask the pain: <em>What are you protecting?</em> You don't need an answer — just the willingness to listen often begins the release.</p>
     </div>
     <div class="btn-row">
       <div class="btn primary" onclick="startPainRelease()">Begin Breath & Release</div>
-      <div class="btn" onclick="show('s-bodyscan')">Back to Body Scan</div>
+      <div class="btn" onclick="show('s-bodyscan')">Back to Scan</div>
     </div>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════
-     SCREEN: MEDITATION
-═══════════════════════════════════════════════════ -->
+<!-- MEDITATION -->
 <div id="s-meditate" class="screen">
   <div class="scroll-inner">
     <p class="tagline">stillness · presence · return</p>
     <h2>Meditation</h2>
     <p>Choose your practice for today.</p>
-    <div style="display:flex;flex-wrap:wrap;gap:.6em;justify-content:center;margin-bottom:1em">
-      <div class="btn" onclick="startMed(5,'Breath Awareness','Focus only on the natural rise and fall of your breath.')">5 min · Breath</div>
+    <div id="med-choices" style="display:flex;flex-wrap:wrap;gap:.5em;justify-content:center;margin-bottom:1em">
+      <div class="btn" onclick="startMed(5,'Breath Awareness','Focus only on the natural rise and fall of your breath. Nothing else is needed.')">5 min · Breath</div>
       <div class="btn" onclick="startMed(10,'Body Presence','Scan slowly from crown to feet, resting wherever you sense aliveness.')">10 min · Body</div>
       <div class="btn" onclick="startMed(15,'Open Awareness','Let thoughts arise and dissolve like clouds. You are the sky.')">15 min · Open</div>
-      <div class="btn" onclick="startMed(20,'Deep Return','A full somatic drop into your body\'s wisdom.')">20 min · Deep</div>
+      <div class="btn" onclick="startMed(20,'Deep Return','A full somatic drop into your body\'s deepest wisdom.')">20 min · Deep</div>
     </div>
     <div id="med-active" style="display:none;text-align:center">
       <p id="med-title" style="font-size:1rem;margin-bottom:.3em"></p>
-      <p id="med-guidance" style="font-size:.88rem;font-style:italic;margin-bottom:1em"></p>
+      <p id="med-guidance" style="font-size:.88rem;font-style:italic;max-width:360px;margin:.5em auto 1em"></p>
       <div class="med-timer" id="med-timer">00:00</div>
-      <div id="breath-ring" style="width:100px;height:100px;border-radius:50%;border:2px solid rgba(255,255,255,.2);margin:1em auto;display:flex;align-items:center;justify-content:center;font-size:.8rem;color:var(--muted);transition:all 1.5s ease">breathe</div>
-      <div class="btn-row">
-        <div class="btn" onclick="stopMed()">End Session</div>
-      </div>
+      <div class="breath-ring" id="med-ring" style="margin:0 auto">breathe</div>
+      <div class="btn-row"><div class="btn" onclick="stopMed()">End Session</div></div>
     </div>
-    <div id="med-complete" style="display:none;text-align:center">
+    <div id="med-done" style="display:none;text-align:center">
       <div class="affirmation">You returned to yourself. That is enough.</div>
       <div class="btn-row">
         <div class="btn primary" onclick="show('s-chakra')">Continue Journey</div>
@@ -330,27 +314,25 @@ p{font-size:clamp(.85rem,2.5vw,1rem);line-height:1.75;text-align:center;color:va
       </div>
     </div>
     <div id="med-tips" class="card">
-      <p style="color:var(--text);font-size:.9rem;margin-bottom:.5em">✦ Before you sit</p>
-      <p>Splash cold water on your face to activate your vagus nerve. Sit with a long spine — imagine a golden thread pulling your crown upward. Let your jaw unclench.</p>
+      <p class="card-title">✦ Before you sit</p>
+      <p>Splash cold water on your face to activate your vagus nerve. Let your jaw unclench. Imagine a golden thread lifting your crown.</p>
     </div>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════
-     SCREEN: SAUNA / WELLNESS PREP
-═══════════════════════════════════════════════════ -->
+<!-- SAUNA PREP -->
 <div id="s-sauna" class="screen">
   <div class="scroll-inner">
     <p class="tagline">prepare · open · detox deeper</p>
     <h2>Wellness Session Prep</h2>
-    <p>Before your sauna, cold plunge, or any heat therapy — prime your body for deeper detox.</p>
+    <p>Before your sauna, cold plunge, or heat therapy — prime your body for deeper detox.</p>
     <div class="card">
-      <p style="color:var(--text);font-size:.9rem;margin-bottom:.8em">💧 Hydration First</p>
-      <p>Drink at least 500ml of water <em>before</em> you enter heat. Add a pinch of sea salt or electrolytes. Your lymphatic system needs fluid to flush effectively.</p>
+      <p class="card-title">💧 Hydration First</p>
+      <p>Drink at least 500ml of water before you enter heat. Add a pinch of sea salt or electrolytes. Your lymphatic system needs fluid to flush effectively.</p>
     </div>
     <div class="card">
-      <p style="color:var(--text);font-size:.9rem;margin-bottom:.8em">Lymphatic Activation Sequence</p>
-      <p style="margin-bottom:1em">Tap each area 10–15 times with gentle fingertip pressure. Tick each one off as you go.</p>
+      <p class="card-title">Lymphatic Activation</p>
+      <p style="margin-bottom:.8em">Tap each area 10–15 times with gentle fingertip pressure. Tick each one as you go.</p>
       <ul class="step-list" id="lymph-list">
         <li onclick="tickStep(this)">Collarbone — tap both sides of the notch</li>
         <li onclick="tickStep(this)">Armpits — light fingertip tapping</li>
@@ -359,12 +341,8 @@ p{font-size:clamp(.85rem,2.5vw,1rem);line-height:1.75;text-align:center;color:va
       </ul>
     </div>
     <div class="card">
-      <p style="color:var(--text);font-size:.9rem;margin-bottom:.5em">✦ Biohack Boost</p>
-      <p>Dry-brush your skin before the sauna in upward strokes toward your heart. This primes your lymphatic vessels and enhances the detox response by up to 30%.</p>
-    </div>
-    <div class="card">
-      <p style="color:var(--text);font-size:.9rem;margin-bottom:.5em">During &amp; After</p>
-      <p>Exit the heat slowly — sit on the edge for 60 seconds before standing. Rehydrate with water + coconut water. Rest for 10 minutes before cold exposure if you're alternating.</p>
+      <p class="card-title">✦ Biohack Boost</p>
+      <p>Dry-brush your skin before the sauna in upward strokes toward your heart. This primes your lymphatic vessels and enhances the detox response beautifully.</p>
     </div>
     <div class="affirmation">My body is a self-cleaning system. I am supporting it, not forcing it.</div>
     <div class="btn-row">
@@ -374,119 +352,72 @@ p{font-size:clamp(.85rem,2.5vw,1rem);line-height:1.75;text-align:center;color:va
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════
-     SCREEN: COMPLETE
-═══════════════════════════════════════════════════ -->
-<div id="s-complete" class="screen">
-  <p class="tagline">a moment of return</p>
+<!-- COMPLETE -->
+<div id="s-complete" class="screen" style="justify-content:center">
+  <p class="tagline fade-up">a moment of return</p>
   <h2 class="fade-up">You came home.</h2>
-  <div class="affirmation fade-up delay-1" id="complete-affirmation">You showed up for yourself today.</div>
-  <p class="fade-up delay-2">Each return is a thread in the fabric of who you are becoming — not because you improved, but because you remembered.</p>
-  <p class="fade-up delay-3" id="moments-complete" style="font-size:.85rem"></p>
-  <div class="btn-row fade-up delay-4">
-    <div class="btn primary" onclick="show('s-chakra')">Return to the Arc</div>
+  <div class="affirmation fade-up d1" id="complete-aff">You showed up for yourself today.</div>
+  <p class="fade-up d2">Each return is a thread in the fabric of who you are becoming — not because you improved, but because you remembered.</p>
+  <p class="fade-up d3" id="moments-complete" style="font-size:.84rem"></p>
+  <div class="btn-row fade-up d4">
+    <div class="btn primary" onclick="show('s-chakra')">Return to the Body</div>
     <div class="btn" onclick="show('s-start')">Begin Again</div>
   </div>
 </div>
-
 <script>
-// ═══════════════════════════════════════════════════
-// DATA
-// ═══════════════════════════════════════════════════
+// ═══ DATA ═══
 const CHAKRAS = [
-  {
-    id:'root', name:'Root Chakra', sanskrit:'Muladhara',
-    color:'#c0392b', glow:'rgba(192,57,43,0.5)',
-    timeStart:5, timeEnd:8, label:'5–8am',
-    emoji:'🔴', element:'Earth',
-    intro:'You are waking into your body. The root grounds you — safety, belonging, presence.',
-    affirmation:'I am safe. I am here. My body is my home.',
-    practice:'Stand barefoot if you can. Feel the floor beneath you. Slowly sway side to side, letting your weight settle. Breathe down into your belly and imagine roots growing from the soles of your feet deep into the earth.',
-    tip:'Cold water on your face in the morning activates your vagus nerve and sets a calm, grounded tone for the day. Try 30 seconds of cold at the end of your shower.',
-    breathPattern:[4,1,5], breathCycles:3,
-    sounds:['earth','hum']
-  },
-  {
-    id:'sacral', name:'Sacral Chakra', sanskrit:'Svadhisthana',
-    color:'#e67e22', glow:'rgba(230,126,34,0.5)',
-    timeStart:8, timeEnd:11, label:'8–11am',
-    emoji:'🟠', element:'Water',
-    intro:'Creative energy rises. The sacral invites flow, pleasure, and gentle movement.',
-    affirmation:'I flow with life. My creativity is a gift. I allow joy.',
-    practice:'Move your hips in slow circles — standing or seated. Place both hands on your lower belly. Breathe into the warmth there. Let any creative ideas arrive without judgment.',
-    tip:'Omega-3s support the nervous system and creative thinking. A handful of walnuts or a drizzle of flaxseed oil in your morning smoothie feeds your brain\'s fluidity.',
-    breathPattern:[4,2,6], breathCycles:3,
-    sounds:['water','flow']
-  },
-  {
-    id:'solar', name:'Solar Plexus', sanskrit:'Manipura',
-    color:'#f1c40f', glow:'rgba(241,196,15,0.5)',
-    timeStart:11, timeEnd:14, label:'11am–2pm',
-    emoji:'🟡', element:'Fire',
-    intro:'Midday power. Your solar plexus is the seat of will and confidence. Act from your core.',
-    affirmation:'I am capable. I trust my direction. I act with clarity.',
-    practice:'Sit tall. Take three sharp breath-of-fire breaths (quick belly pumps). Then one long deep inhale, hold at the top, and release with an audible sigh. Feel your center ignite.',
-    tip:'Sunlight on your skin between 10am–2pm triggers vitamin D synthesis and serotonin production. Even 15 minutes outdoors at midday shifts your mood and focus.',
-    breathPattern:[3,0,3], breathCycles:5,
-    sounds:['fire','drum']
-  },
-  {
-    id:'heart', name:'Heart Chakra', sanskrit:'Anahata',
-    color:'#27ae60', glow:'rgba(39,174,96,0.5)',
-    timeStart:14, timeEnd:16, label:'2–4pm',
-    emoji:'💚', element:'Air',
-    intro:'The afternoon softens. Your heart calls you to connection — with others and yourself.',
-    affirmation:'I give and receive love freely. I am enough. My heart is open.',
-    practice:'Place both hands on your heart. Feel it beating. Breathe into the space behind your sternum. With each exhale, release one thing you\'ve been carrying. On each inhale, receive warmth.',
-    tip:'A 10-minute walk in nature after lunch lowers cortisol, aids digestion, and opens the heart meridian. Even a slow amble is medicine.',
-    breathPattern:[5,2,5], breathCycles:4,
-    sounds:['birds','hum']
-  },
-  {
-    id:'throat', name:'Throat Chakra', sanskrit:'Vishuddha',
-    color:'#1abc9c', glow:'rgba(26,188,156,0.5)',
-    timeStart:16, timeEnd:18, label:'4–6pm',
-    emoji:'🩵', element:'Sound',
-    intro:'Express what is true. The throat chakra invites authentic voice and honest release.',
-    affirmation:'My voice matters. I speak with truth and kindness. I am heard.',
-    practice:'Hum softly — any tone. Feel the vibration in your throat and chest. Then speak one truth aloud, even a whisper: something you need to say or feel. Let sound be your release.',
-    tip:'Humming stimulates the vagus nerve and activates the parasympathetic nervous system. Even 2 minutes of humming lowers heart rate and reduces anxiety.',
-    breathPattern:[4,0,6], breathCycles:3,
-    sounds:['chime','wind']
-  },
-  {
-    id:'thirdeye', name:'Third Eye', sanskrit:'Ajna',
-    color:'#2980b9', glow:'rgba(41,128,185,0.5)',
-    timeStart:18, timeEnd:21, label:'6–9pm',
-    emoji:'💙', element:'Light',
-    intro:'The evening turns inward. Intuition deepens as the world quiets.',
-    affirmation:'I trust my inner knowing. I see clearly. I am guided.',
-    practice:'Close your eyes. Gently press two fingers between your eyebrows. Breathe slowly. On each inhale, imagine a soft indigo light expanding behind your eyes. Ask your intuition one question and simply listen.',
-    tip:'Reducing blue light exposure after 7pm significantly improves melatonin production. Use warm lighting, blue-light glasses, or a screen filter as your evening practice.',
-    breathPattern:[4,4,6], breathCycles:4,
-    sounds:['bowl','night']
-  },
-  {
-    id:'crown', name:'Crown Chakra', sanskrit:'Sahasrara',
-    color:'#8e44ad', glow:'rgba(142,68,173,0.5)',
-    timeStart:21, timeEnd:24, label:'9pm+',
-    emoji:'💜', element:'Consciousness',
+  { id:'crown',    name:'Crown Chakra',    sanskrit:'Sahasrara',  color:'#9b59b6', glow:'rgba(155,89,182,0.5)',  cy:72,  timeStart:21,timeEnd:24, label:'9pm+',     emoji:'💜', element:'Consciousness',
     intro:'Prepare for rest and renewal. The crown dissolves the day and returns you to wholeness.',
     affirmation:'I release this day with gratitude. I am connected to all that is. I rest in peace.',
-    practice:'Lie down if possible. Breathe slowly and deeply. With each exhale, release one thing from your day — a worry, a regret, a tension. Scan from your feet upward, thanking each part of your body for its work today.',
-    tip:'Magnesium glycinate taken 30 minutes before sleep relaxes muscles, calms the nervous system, and deepens sleep quality. Pair with a cool room (18–20°C) for optimal recovery.',
-    breathPattern:[4,4,8], breathCycles:4,
-    sounds:['rain','bowl']
-  }
+    practice:'Lie down if possible. With each exhale, release one thing from your day — a worry, a tension. Scan from feet upward, thanking each part of your body for its work today.',
+    tip:'Magnesium glycinate 30 minutes before sleep relaxes muscles and deepens sleep quality. Pair with a cool room (18–20°C) for optimal recovery.',
+    breathPattern:[4,4,8], breathCycles:4, freq:963 },
+  { id:'thirdeye', name:'Third Eye',        sanskrit:'Ajna',       color:'#3498db', glow:'rgba(52,152,219,0.5)',  cy:110, timeStart:18,timeEnd:21, label:'6–9pm',    emoji:'💙', element:'Light',
+    intro:'The evening turns inward. Intuition deepens as the world quiets around you.',
+    affirmation:'I trust my inner knowing. I see clearly. I am guided.',
+    practice:'Close your eyes. Press two fingers gently between your eyebrows. Breathe slowly. Imagine soft indigo light expanding behind your eyes. Ask your intuition one question and simply listen.',
+    tip:'Reducing blue light after 7pm significantly improves melatonin production. Use warm lighting or blue-light glasses as your evening ritual.',
+    breathPattern:[4,4,6], breathCycles:4, freq:852 },
+  { id:'throat',   name:'Throat Chakra',   sanskrit:'Vishuddha',  color:'#1abc9c', glow:'rgba(26,188,156,0.5)',  cy:152, timeStart:16,timeEnd:18, label:'4–6pm',    emoji:'🩵', element:'Sound',
+    intro:'Express what is true. The throat invites authentic voice and honest release.',
+    affirmation:'My voice matters. I speak with truth and kindness. I am heard.',
+    practice:'Hum softly — any tone. Feel the vibration in your throat and chest. Then speak one truth aloud, even a whisper: something you need to say. Let sound be your release.',
+    tip:'Humming stimulates the vagus nerve and activates the parasympathetic nervous system. Even 2 minutes of humming lowers heart rate and reduces anxiety.',
+    breathPattern:[4,0,6], breathCycles:3, freq:741 },
+  { id:'heart',    name:'Heart Chakra',    sanskrit:'Anahata',    color:'#2ecc71', glow:'rgba(46,204,113,0.5)',  cy:196, timeStart:14,timeEnd:16, label:'2–4pm',    emoji:'💚', element:'Air',
+    intro:'The afternoon softens. Your heart calls you to connection — with others and with yourself.',
+    affirmation:'I give and receive love freely. I am enough. My heart is open.',
+    practice:'Place both hands on your heart. Feel it beating. Breathe into the space behind your sternum. With each exhale, release one thing you\'ve been carrying. On each inhale, receive warmth.',
+    tip:'A 10-minute walk in nature after lunch lowers cortisol, aids digestion, and opens the heart. Even a slow amble is medicine.',
+    breathPattern:[5,2,5], breathCycles:4, freq:639 },
+  { id:'solar',    name:'Solar Plexus',    sanskrit:'Manipura',   color:'#f1c40f', glow:'rgba(241,196,15,0.5)',  cy:236, timeStart:11,timeEnd:14, label:'11am–2pm', emoji:'💛', element:'Fire',
+    intro:'Midday power. Your solar plexus is the seat of will and confidence. Act from your core.',
+    affirmation:'I am capable. I trust my direction. I act with clarity and fire.',
+    practice:'Sit tall. Take three sharp belly pumps (breath of fire). Then one long deep inhale, hold, release with an audible sigh. Feel your centre ignite.',
+    tip:'Sunlight on your skin between 10am–2pm triggers vitamin D synthesis and serotonin production. Even 15 minutes outdoors shifts your mood and focus.',
+    breathPattern:[3,0,3], breathCycles:5, freq:528 },
+  { id:'sacral',   name:'Sacral Chakra',   sanskrit:'Svadhisthana',color:'#f39c12',glow:'rgba(243,156,18,0.5)',  cy:270, timeStart:8, timeEnd:11, label:'8–11am',   emoji:'🧡', element:'Water',
+    intro:'Creative energy rises. The sacral invites flow, pleasure, and gentle movement.',
+    affirmation:'I flow with life. My creativity is a gift. I allow joy.',
+    practice:'Move your hips in slow circles. Place both hands on your lower belly. Breathe into the warmth there. Let creative ideas arrive without judgment.',
+    tip:'Omega-3s support creative thinking and fluid nervous system function. A handful of walnuts or flaxseed oil in your morning meal feeds your brain\'s fluidity.',
+    breathPattern:[4,2,6], breathCycles:3, freq:417 },
+  { id:'root',     name:'Root Chakra',     sanskrit:'Muladhara',  color:'#e74c3c', glow:'rgba(231,76,60,0.5)',   cy:310, timeStart:5, timeEnd:8,  label:'5–8am',    emoji:'❤️', element:'Earth',
+    intro:'You are waking into your body. The root grounds you — safety, belonging, presence.',
+    affirmation:'I am safe. I am here. My body is my home.',
+    practice:'Stand barefoot if you can. Feel the floor beneath you. Sway gently side to side, letting your weight settle. Breathe down into your belly and imagine roots growing from your feet deep into the earth.',
+    tip:'Cold water on your face in the morning activates your vagus nerve and sets a calm, grounded tone for the day. Try 30 seconds of cold at the end of your shower.',
+    breathPattern:[4,1,5], breathCycles:3, freq:396 }
 ];
 
-const GUIDANCE_MATRIX = [
-  { tension:[70,100], energy:[0,40],  pain:[60,100], route:'pain',    text:'Your body is holding significant pain and tension. Let\'s offer it gentle release — breath by breath.' },
-  { tension:[70,100], energy:[0,40],  pain:[0,59],   route:'chakra',  text:'You feel heavy and low. This is your body asking for deep rest. Your guidance: slow down, breathe into the weight, and let it be heavy without fighting it.' },
-  { tension:[70,100], energy:[41,100],pain:[0,100],  route:'chakra',  text:'High tension with energy — your system is activated. Ground yourself first. Feet on the floor, slow exhale, jaw unclenched.' },
-  { tension:[0,40],   energy:[0,40],  pain:[0,100],  route:'chakra',  text:'Soft and low — your body is in a gentle ebb. This is not emptiness; it is rest. Follow the tide inward.' },
-  { tension:[0,40],   energy:[60,100],pain:[0,100],  route:'chakra',  text:'Open and alive — your body is ready to receive. This is a beautiful moment to move, create, or connect.' },
-  { tension:[41,69],  energy:[0,100], pain:[0,100],  route:'chakra',  text:'Your body is in a neutral holding. Take a breath, notice without fixing, and let the next right thing emerge.' }
+const GUIDANCE = [
+  {tension:[70,100],energy:[0,40], pain:[60,100],route:'pain',   text:'Your body is holding significant pain. Let\'s offer it gentle release — breath by breath.'},
+  {tension:[70,100],energy:[0,40], pain:[0,59],  route:'chakra', text:'You feel heavy and low. Your body is asking for deep rest. Breathe into the weight, and let it be heavy without fighting it.'},
+  {tension:[70,100],energy:[41,100],pain:[0,100],route:'chakra', text:'High tension with energy — your system is activated. Ground yourself first: feet on the floor, slow exhale, jaw unclenched.'},
+  {tension:[0,40],  energy:[0,40], pain:[0,100], route:'chakra', text:'Soft and low — your body is in a gentle ebb. This is not emptiness; it is rest. Follow the tide inward.'},
+  {tension:[0,40],  energy:[60,100],pain:[0,100],route:'chakra', text:'Open and alive — your body is ready to receive. This is a beautiful moment to move, create, or connect.'},
+  {tension:[41,69], energy:[0,100],pain:[0,100], route:'chakra', text:'Your body is in a neutral holding. Take a breath, notice without fixing, and let the next right thing emerge.'}
 ];
 
 const AFFIRMATIONS = [
@@ -502,93 +433,64 @@ const AFFIRMATIONS = [
   'Coming back to yourself is always the right move.'
 ];
 
-// ═══════════════════════════════════════════════════
-// STATE
-// ═══════════════════════════════════════════════════
-let moments = parseInt(localStorage.getItem('soma_m') || '0');
-let currentScreen = 's-start';
-let screenHistory = [];
-let audioOn = false;
-let audioCtx = null;
-let activeNodes = [];
-let breathInterval = null;
-let medInterval = null;
-let medSeconds = 0;
-let medDuration = 0;
-let currentChakra = null;
-let paintInterval = null;
-let scanPoint_id = null;
+// ═══ STATE ═══
+let moments = parseInt(localStorage.getItem('soma_m')||'0');
+let currentScreen='s-start', screenHistory=[], currentChakra=null;
+let audioOn=false, audioCtx=null, activeNodes=[], droneNodes=[];
+let breathTO=null, medInterval=null, medSec=0, medDur=0;
 
-// ═══════════════════════════════════════════════════
-// INIT
-// ═══════════════════════════════════════════════════
-document.addEventListener('DOMContentLoaded', () => {
-  updateMoments();
-  initCanvas();
-  renderChakraArc();
-  updateChakraGreeting();
+// ═══ INIT ═══
+document.addEventListener('DOMContentLoaded',()=>{
+  updateMoments(); initCanvas(); renderLotus(); updateGreeting();
 });
 
-// ═══════════════════════════════════════════════════
-// SCREEN NAVIGATION
-// ═══════════════════════════════════════════════════
-function show(id) {
-  if (currentScreen !== id) screenHistory.push(currentScreen);
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+// ═══ NAVIGATION ═══
+function show(id){
+  if(currentScreen!==id) screenHistory.push(currentScreen);
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
-  currentScreen = id;
-  document.getElementById('back-btn').style.display = screenHistory.length ? 'block' : 'none';
-  if (id === 's-complete') completeReturn();
-  if (id === 's-chakra') { renderChakraArc(); updateChakraGreeting(); }
+  currentScreen=id;
+  document.getElementById('back-btn').style.display=screenHistory.length?'block':'none';
+  if(id==='s-complete') completeReturn();
+  if(id==='s-chakra'){renderLotus();updateGreeting();}
   window.scrollTo(0,0);
 }
-
-function goBack() {
-  if (screenHistory.length) {
-    const prev = screenHistory.pop();
-    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-    document.getElementById(prev).classList.add('active');
-    currentScreen = prev;
-    document.getElementById('back-btn').style.display = screenHistory.length ? 'block' : 'none';
-  }
+function goBack(){
+  if(!screenHistory.length) return;
+  const prev=screenHistory.pop();
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(prev).classList.add('active');
+  currentScreen=prev;
+  document.getElementById('back-btn').style.display=screenHistory.length?'block':'none';
 }
 
-// ═══════════════════════════════════════════════════
-// CANVAS ATMOSPHERE
-// ═══════════════════════════════════════════════════
-function initCanvas() {
-  const c = document.getElementById('bg');
-  const ctx = c.getContext('2d');
-  function resize() { c.width = window.innerWidth; c.height = window.innerHeight; }
-  resize();
-  window.addEventListener('resize', resize);
-
-  const motes = Array.from({length:40}, () => ({
-    x: Math.random(), y: Math.random(),
-    r: Math.random()*2+.5, vx:(Math.random()-.5)*.0003, vy:(Math.random()-.5)*.0003,
-    o: Math.random()*.4+.05
+// ═══ CANVAS ═══
+function initCanvas(){
+  const c=document.getElementById('bg'), ctx=c.getContext('2d');
+  function resize(){c.width=innerWidth;c.height=innerHeight;}
+  resize(); window.addEventListener('resize',resize);
+  const motes=Array.from({length:35},()=>({
+    x:Math.random(),y:Math.random(),r:Math.random()*2+.5,
+    vx:(Math.random()-.5)*.0002,vy:(Math.random()-.5)*.0002,
+    o:Math.random()*.15+.03,
+    hue:Math.random()*60+260
   }));
-
-  let glowColor = [78,160,200];
-  let targetGlow = [78,160,200];
-
-  function lerp(a,b,t){ return a+(b-a)*t; }
-
-  function draw() {
-    const W = c.width, H = c.height;
+  function draw(){
+    const W=c.width,H=c.height;
     ctx.clearRect(0,0,W,H);
-    glowColor = glowColor.map((v,i) => lerp(v, targetGlow[i], .005));
-    const g = ctx.createRadialGradient(W/2,H*.4,0,W/2,H*.4,W*.6);
-    g.addColorStop(0, `rgba(${glowColor.map(Math.round).join(',')},0.08)`);
-    g.addColorStop(1, 'transparent');
-    ctx.fillStyle = g; ctx.fillRect(0,0,W,H);
-    motes.forEach(m => {
-      m.x += m.vx; m.y += m.vy;
-      if (m.x<0) m.x=1; if (m.x>1) m.x=0;
-      if (m.y<0) m.y=1; if (m.y>1) m.y=0;
+    // gentle rainbow shimmer
+    const g=ctx.createRadialGradient(W/2,H*.35,0,W/2,H*.35,W*.55);
+    g.addColorStop(0,'rgba(220,200,255,0.06)');
+    g.addColorStop(.5,'rgba(180,230,255,0.04)');
+    g.addColorStop(1,'transparent');
+    ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+    motes.forEach(m=>{
+      m.x+=m.vx; m.y+=m.vy;
+      if(m.x<0)m.x=1;if(m.x>1)m.x=0;
+      if(m.y<0)m.y=1;if(m.y>1)m.y=0;
       ctx.beginPath();
-      ctx.arc(m.x*W, m.y*H, m.r, 0, Math.PI*2);
-      ctx.fillStyle = `rgba(255,255,255,${m.o})`;
+      ctx.arc(m.x*W,m.y*H,m.r,0,Math.PI*2);
+      ctx.fillStyle=`hsla(${m.hue},60%,75%,${m.o})`;
       ctx.fill();
     });
     requestAnimationFrame(draw);
@@ -596,385 +498,321 @@ function initCanvas() {
   draw();
 }
 
-</script>
-<script>
-// ═══════════════════════════════════════════════════
-// CHAKRA ARC RENDERER
-// ═══════════════════════════════════════════════════
-function getActiveChakra() {
-  const h = new Date().getHours() + new Date().getMinutes()/60;
-  for (let i = CHAKRAS.length-1; i >= 0; i--) {
-    if (h >= CHAKRAS[i].timeStart) return CHAKRAS[i];
-  }
-  return CHAKRAS[0];
+// ═══ LOTUS CHAKRA FIGURE ═══
+function getActiveChakra(){
+  const h=new Date().getHours()+new Date().getMinutes()/60;
+  for(let i=CHAKRAS.length-1;i>=0;i--) if(h>=CHAKRAS[i].timeStart) return CHAKRAS[i];
+  return CHAKRAS[CHAKRAS.length-1];
 }
-
-function arcPoint(t) {
-  // t: 0..1 along the arc  M 40 270 Q 260 20 480 270
-  const x0=40,y0=270,cx=260,cy=20,x1=480,y1=270;
-  const mt = 1-t;
-  return {
-    x: mt*mt*x0 + 2*mt*t*cx + t*t*x1,
-    y: mt*mt*y0 + 2*mt*t*cy + t*t*y1
-  };
-}
-
-function renderChakraArc() {
-  const g = document.getElementById('chakra-orbs');
-  if (!g) return;
-  g.innerHTML = '';
-  const active = getActiveChakra();
-  const now = new Date();
-  const h = now.getHours() + now.getMinutes()/60;
-  const dayFrac = Math.max(0, Math.min(1, (h - 5) / 19));
-
-  // Time needle
-  const np = arcPoint(dayFrac);
-  const needle = document.getElementById('time-needle');
-  if (needle) {
-    needle.setAttribute('x1', np.x); needle.setAttribute('y1', np.y+14);
-    needle.setAttribute('x2', np.x); needle.setAttribute('y2', np.y-8);
-  }
-
-  CHAKRAS.forEach((ck, i) => {
-    const t = i / (CHAKRAS.length - 1);
-    const p = arcPoint(t);
-    const isActive = ck.id === active.id;
-
-    const grp = document.createElementNS('http://www.w3.org/2000/svg','g');
-    grp.setAttribute('class','chakra-orb' + (isActive?' orb-active':''));
-    grp.setAttribute('onclick', `openChakra('${ck.id}')`);
-    grp.setAttribute('transform', `translate(${p.x},${p.y})`);
-
-    // Outer glow ring
-    const outer = document.createElementNS('http://www.w3.org/2000/svg','circle');
-    outer.setAttribute('class','outer');
-    outer.setAttribute('cx','0'); outer.setAttribute('cy','0');
-    outer.setAttribute('r', isActive?'28':'20');
-    outer.setAttribute('fill', ck.glow);
-    outer.setAttribute('opacity', isActive?'0.25':'0.08');
+function renderLotus(){
+  const g=document.getElementById('chakra-pts');
+  if(!g) return;
+  g.innerHTML='';
+  const active=getActiveChakra();
+  CHAKRAS.forEach(ck=>{
+    const isAct=ck.id===active.id;
+    const grp=document.createElementNS('http://www.w3.org/2000/svg','g');
+    grp.setAttribute('class','chakra-pt'+(isAct?' active-chakra':''));
+    grp.setAttribute('onclick',`openChakra('${ck.id}')`);
+    // outer glow
+    const outer=document.createElementNS('http://www.w3.org/2000/svg','circle');
+    outer.setAttribute('class','orb-outer');
+    outer.setAttribute('cx','150'); outer.setAttribute('cy',ck.cy);
+    outer.setAttribute('r',isAct?'22':'14');
+    outer.setAttribute('fill',ck.glow); outer.setAttribute('opacity',isAct?'0.25':'0.1');
     grp.appendChild(outer);
-
-    // Inner orb
-    const inner = document.createElementNS('http://www.w3.org/2000/svg','circle');
-    inner.setAttribute('class','inner');
-    inner.setAttribute('cx','0'); inner.setAttribute('cy','0');
-    inner.setAttribute('r', isActive?'16':'11');
-    inner.setAttribute('fill', ck.color);
-    inner.setAttribute('opacity', isActive?'1':'0.5');
+    // inner orb
+    const inner=document.createElementNS('http://www.w3.org/2000/svg','circle');
+    inner.setAttribute('class','orb-inner');
+    inner.setAttribute('cx','150'); inner.setAttribute('cy',ck.cy);
+    inner.setAttribute('r',isAct?'11':'8');
+    inner.setAttribute('fill',ck.color); inner.setAttribute('opacity',isAct?'1':'0.55');
+    if(isAct) inner.setAttribute('filter','url(#glow)');
     grp.appendChild(inner);
-
-    // Label
-    const lbl = document.createElementNS('http://www.w3.org/2000/svg','text');
-    lbl.setAttribute('class','orb-label');
-    lbl.setAttribute('y','30');
-    lbl.textContent = ck.id === 'thirdeye' ? '3rd Eye' : ck.name.split(' ')[0];
-    grp.appendChild(lbl);
-
-    // Time label
-    const tlbl = document.createElementNS('http://www.w3.org/2000/svg','text');
-    tlbl.setAttribute('class','time-label');
-    tlbl.setAttribute('y','42');
-    tlbl.textContent = ck.label;
-    grp.appendChild(tlbl);
-
+    // label
+    const txt=document.createElementNS('http://www.w3.org/2000/svg','text');
+    txt.setAttribute('x','168'); txt.setAttribute('y',String(ck.cy+4));
+    txt.setAttribute('font-size','9'); txt.setAttribute('fill','rgba(80,60,100,0.7)');
+    txt.setAttribute('pointer-events','none');
+    txt.textContent=ck.id==='thirdeye'?'3rd Eye':ck.name.split(' ')[0];
+    grp.appendChild(txt);
     g.appendChild(grp);
   });
 }
-
-function updateChakraGreeting() {
-  const h = new Date().getHours();
-  const greetings = ['Good night','Good morning','Good morning','Good afternoon','Good afternoon','Good evening','Good evening'];
-  const idx = h<5?0:h<12?1:h<14?2:h<17?3:h<19?4:h<22?5:6;
-  const el = document.getElementById('chakra-greeting');
-  const sub = document.getElementById('chakra-subtitle');
-  if (el) el.textContent = greetings[idx];
-  const active = getActiveChakra();
-  if (sub) sub.textContent = `The ${active.name} is pulsing — ${active.element} energy is alive in you now.`;
+function updateGreeting(){
+  const h=new Date().getHours();
+  const g=['Good night','Good morning','Good morning','Good afternoon','Good afternoon','Good evening','Good evening'];
+  const idx=h<5?0:h<12?1:h<14?2:h<17?3:h<19?4:h<22?5:6;
+  const el=document.getElementById('chakra-greeting');
+  const sub=document.getElementById('chakra-subtitle');
+  if(el) el.textContent=g[idx];
+  const ac=getActiveChakra();
+  if(sub) sub.textContent=`The ${ac.name} is glowing for you — tap it to begin. ${ac.element} energy is alive in you now.`;
 }
-
-function openChakra(id) {
-  const ck = CHAKRAS.find(c => c.id === id);
-  if (!ck) return;
-  currentChakra = ck;
-
-  // Header orb
-  const hdr = document.getElementById('practice-header');
-  hdr.textContent = ck.emoji;
-  hdr.style.background = `radial-gradient(circle, ${ck.glow}, transparent 70%)`;
-  hdr.style.color = ck.color;
-  hdr.style.boxShadow = `0 0 40px ${ck.glow}`;
-
-  document.getElementById('practice-name').textContent = ck.name;
-  document.getElementById('practice-time-label').textContent = `${ck.sanskrit} · ${ck.element} · ${ck.label}`;
-  document.getElementById('practice-intro').textContent = ck.intro;
-  document.getElementById('practice-affirmation').textContent = ck.affirmation;
-  document.getElementById('practice-body').textContent = ck.practice;
-  document.getElementById('practice-tip').textContent = ck.tip;
-  document.getElementById('practice-breath-btn').textContent = 'Start Breathing Practice';
-
-  if (audioOn) playChakraTone(ck);
+function openChakra(id){
+  const ck=CHAKRAS.find(c=>c.id===id); if(!ck) return;
+  currentChakra=ck;
+  const orb=document.getElementById('practice-orb');
+  orb.textContent=ck.emoji;
+  orb.style.background=`radial-gradient(circle,${ck.glow},transparent 70%)`;
+  orb.style.boxShadow=`0 0 40px ${ck.glow}`;
+  document.getElementById('practice-name').textContent=ck.name;
+  document.getElementById('practice-time-lbl').textContent=`${ck.sanskrit} · ${ck.element} · ${ck.label}`;
+  document.getElementById('practice-intro').textContent=ck.intro;
+  document.getElementById('practice-aff').textContent=ck.affirmation;
+  document.getElementById('practice-body').textContent=ck.practice;
+  document.getElementById('practice-tip').textContent=ck.tip;
+  document.getElementById('prac-start-btn').textContent='Begin Breathing Practice';
+  const ring=document.getElementById('prac-ring');
+  ring.textContent='breathe'; ring.className='breath-ring'; ring.style.transform='';
+  ring.style.borderColor=ck.color+'55';
+  if(audioOn){ stopDrones(); playChakraTone(ck); }
   show('s-practice');
 }
 
-// ═══════════════════════════════════════════════════
-// BREATHING PRACTICE
-// ═══════════════════════════════════════════════════
-function startPracticeBreath() {
-  if (!currentChakra) return;
-  const [inhale, hold, exhale] = currentChakra.breathPattern;
-  const cycles = currentChakra.breathCycles;
-  runBreath('breath-ring','breath-label', inhale, hold, exhale, cycles, () => {
-    document.getElementById('practice-breath-btn').textContent = '✓ Complete';
-    addMoment();
-  });
-}
-
-function runBreath(ringId, labelId, inhale, hold, exhale, cycles, onDone) {
-  clearInterval(breathInterval);
-  const ring = document.getElementById(ringId);
-  const lbl = document.getElementById(labelId);
-  if (!ring) return;
-  let cycle = 0;
-
-  function doPhase(phase, dur, next) {
-    if (ring) {
-      ring.textContent = phase === 'inhale' ? 'inhale' : phase === 'hold' ? 'hold' : 'exhale';
-      ring.className = phase === 'inhale' ? (ringId==='breath-ring'?'inhale':'') : (phase==='exhale'?'exhale':'');
-      if (ringId==='breath-ring') {
-        ring.style.transform = phase==='inhale'?'scale(1.35)':phase==='hold'?'scale(1.35)':'scale(0.85)';
-        ring.style.borderColor = phase==='inhale'?'rgba(255,255,255,0.6)':'rgba(255,255,255,0.15)';
-      }
+// ═══ BREATH ENGINE ═══
+function runBreath(ringId,lblId,inhale,hold,exhale,cycles,onDone){
+  clearAllBreath();
+  const ring=document.getElementById(ringId);
+  const lbl=document.getElementById(lblId);
+  let cycle=0;
+  function phase(name,dur,next){
+    if(ring){
+      ring.textContent=name;
+      ring.style.transform=name==='inhale'?'scale(1.35)':name==='hold'?'scale(1.35)':'scale(0.82)';
+      ring.className='breath-ring '+(name==='inhale'||name==='hold'?'inhale':'exhale');
     }
-    if (lbl) lbl.textContent = `Cycle ${cycle+1} of ${cycles} · ${phase} for ${dur}s`;
-    setTimeout(next, dur * 1000);
+    if(lbl) lbl.textContent=`Cycle ${cycle+1} of ${cycles} · ${name}${dur?' for '+dur+'s':''}`;
+    breathTO=setTimeout(next,dur*1000);
   }
-
-  function nextCycle() {
-    if (cycle >= cycles) { if(onDone) onDone(); return; }
-    doPhase('inhale', inhale, () => {
-      if (hold > 0) {
-        doPhase('hold', hold, () => doPhase('exhale', exhale, () => { cycle++; nextCycle(); }));
-      } else {
-        doPhase('exhale', exhale, () => { cycle++; nextCycle(); });
-      }
+  function next(){
+    if(cycle>=cycles){if(onDone)onDone();return;}
+    phase('inhale',inhale,()=>{
+      if(hold>0) phase('hold',hold,()=>phase('exhale',exhale,()=>{cycle++;next();}));
+      else phase('exhale',exhale,()=>{cycle++;next();});
     });
   }
-  nextCycle();
+  next();
 }
+function clearAllBreath(){ if(breathTO) clearTimeout(breathTO); }
 
-// ═══════════════════════════════════════════════════
-// BODY SCAN
-// ═══════════════════════════════════════════════════
-function scanPoint(id, msg) {
-  scanPoint_id = id;
-  document.getElementById('soma-msg').textContent = msg;
-  document.getElementById('scan-sliders').style.display = 'block';
-  updateScanFeedback();
-}
-
-function updateScanFeedback() {
-  const t = parseInt(document.getElementById('sl-tension').value);
-  const e = parseInt(document.getElementById('sl-energy').value);
-  const p = parseInt(document.getElementById('sl-pain').value);
-  document.getElementById('sl-tension-val').textContent = t;
-  document.getElementById('sl-energy-val').textContent = e;
-  document.getElementById('sl-pain-val').textContent = p;
-
-  let match = GUIDANCE_MATRIX[GUIDANCE_MATRIX.length-1];
-  for (const g of GUIDANCE_MATRIX) {
-    const tMatch = t >= g.tension[0] && t <= g.tension[1];
-    const eMatch = e >= g.energy[0] && e <= g.energy[1];
-    const pMatch = p >= g.pain[0] && p <= g.pain[1];
-    if (tMatch && eMatch && pMatch) { match = g; break; }
-  }
-
-  document.getElementById('scan-guidance').style.display = 'block';
-  document.getElementById('scan-guidance-text').textContent = match.text;
-  const btn = document.getElementById('scan-action-btn');
-  btn.style.display = 'inline-block';
-  btn.dataset.route = match.route;
-  btn.dataset.pain = p;
-}
-
-function scanAction() {
-  const btn = document.getElementById('scan-action-btn');
-  const route = btn.dataset.route;
-  const pain = parseInt(btn.dataset.pain || '0');
-  if (route === 'pain' || pain >= 60) {
-    show('s-pain');
-  } else {
-    const active = getActiveChakra();
-    openChakra(active.id);
-  }
-}
-
-// ═══════════════════════════════════════════════════
-// PAIN RELEASE
-// ═══════════════════════════════════════════════════
-function startPainRelease() {
-  runBreath('pain-ring', 'pain-breath-label', 4, 1, 6, 6, () => {
-    document.getElementById('pain-breath-label').textContent = 'Six cycles complete. Rest here.';
-    addMoment();
+function startPracticeBreath(){
+  if(!currentChakra) return;
+  const [i,h,e]=currentChakra.breathPattern;
+  runBreath('prac-ring','prac-breath-lbl',i,h,e,currentChakra.breathCycles,()=>{
+    document.getElementById('prac-start-btn').textContent='✓ Practice Complete';
+    addMoment(); if(audioOn) playBowl();
   });
 }
 
-// ═══════════════════════════════════════════════════
-// MEDITATION
-// ═══════════════════════════════════════════════════
-function startMed(mins, title, guidance) {
-  medDuration = mins * 60;
-  medSeconds = 0;
-  document.getElementById('med-tips').style.display = 'none';
-  document.getElementById('med-active').style.display = 'block';
-  document.getElementById('med-complete').style.display = 'none';
-  document.getElementById('med-title').textContent = `${mins} min · ${title}`;
-  document.getElementById('med-guidance').textContent = guidance;
+// ═══ BODY SCAN ═══
+function scanPoint(id){
+  const msgs={head:'Your mind, arriving.',throat:'Your voice, softening.',heart:'Your heart, feeling.',belly:'Your centre, grounding.',hips:'Your base, settling.',feet:'Your roots, meeting earth.'};
+  document.getElementById('soma-msg').textContent=msgs[id]||'Sensing…';
+  document.getElementById('scan-sliders').style.display='block';
+  updateScan();
+}
+function updateScan(){
+  const t=+document.getElementById('sl-tension').value;
+  const e=+document.getElementById('sl-energy').value;
+  const p=+document.getElementById('sl-pain').value;
+  document.getElementById('slv-t').textContent=t;
+  document.getElementById('slv-e').textContent=e;
+  document.getElementById('slv-p').textContent=p;
+  let match=GUIDANCE[GUIDANCE.length-1];
+  for(const g of GUIDANCE){
+    if(t>=g.tension[0]&&t<=g.tension[1]&&e>=g.energy[0]&&e<=g.energy[1]&&p>=g.pain[0]&&p<=g.pain[1]){match=g;break;}
+  }
+  document.getElementById('scan-guide').style.display='block';
+  document.getElementById('scan-guide-txt').textContent=match.text;
+  const btn=document.getElementById('scan-act-btn');
+  btn.style.display='inline-block'; btn.dataset.route=match.route;
+}
+function scanAction(){
+  const r=document.getElementById('scan-act-btn').dataset.route;
+  const pain=+document.getElementById('sl-pain').value;
+  if(r==='pain'||pain>=60) show('s-pain');
+  else openChakra(getActiveChakra().id);
+}
 
-  const ring = document.getElementById('breath-ring');
-  if (ring) { ring.textContent = 'breathe'; ring.style.transform = 'scale(1)'; }
+// ═══ PAIN RELEASE ═══
+function startPainRelease(){
+  runBreath('pain-ring','pain-lbl',4,1,6,6,()=>{
+    document.getElementById('pain-lbl').textContent='Six cycles complete. Rest here now.';
+    addMoment(); if(audioOn) playBowl();
+  });
+}
 
-  let breathPhase = 0, breathTime = 0;
-  const breathSeq = [4,0,6]; // inhale / hold / exhale
-
+// ═══ MEDITATION ═══
+function startMed(mins,title,guidance){
+  medDur=mins*60; medSec=0;
+  document.getElementById('med-tips').style.display='none';
+  document.getElementById('med-choices').style.display='none';
+  document.getElementById('med-active').style.display='block';
+  document.getElementById('med-done').style.display='none';
+  document.getElementById('med-title').textContent=`${mins} min · ${title}`;
+  document.getElementById('med-guidance').textContent=guidance;
+  const ring=document.getElementById('med-ring');
+  ring.textContent='breathe'; ring.className='breath-ring'; ring.style.transform='';
+  let bp=0,bt=0; const seq=[4,0,6];
   clearInterval(medInterval);
-  medInterval = setInterval(() => {
-    medSeconds++;
-    const rem = medDuration - medSeconds;
-    const m = Math.floor(rem/60).toString().padStart(2,'0');
-    const s = (rem%60).toString().padStart(2,'0');
-    document.getElementById('med-timer').textContent = `${m}:${s}`;
-
-    // Gentle breath guide
-    breathTime++;
-    const cur = breathSeq[breathPhase];
-    if (breathTime >= cur) { breathTime = 0; breathPhase = (breathPhase+1)%3; }
-    if (ring) {
-      const phase = ['inhale','hold','exhale'][breathPhase];
-      ring.textContent = phase;
-      ring.style.transform = breathPhase===0?'scale(1.3)':breathPhase===2?'scale(0.85)':'scale(1.3)';
-    }
-
-    if (medSeconds >= medDuration) stopMed();
-  }, 1000);
+  medInterval=setInterval(()=>{
+    medSec++;
+    const rem=medDur-medSec;
+    document.getElementById('med-timer').textContent=
+      String(Math.floor(rem/60)).padStart(2,'0')+':'+String(rem%60).padStart(2,'0');
+    bt++;
+    if(bt>=(seq[bp]||1)){bt=0;bp=(bp+1)%3;}
+    const ph=['inhale','hold','exhale'][bp];
+    ring.textContent=ph; ring.className='breath-ring '+(bp===2?'exhale':'inhale');
+    ring.style.transform=bp===2?'scale(0.82)':'scale(1.3)';
+    if(medSec>=medDur) stopMed();
+  },1000);
+  if(audioOn) playAmbient();
 }
-
-function stopMed() {
+function stopMed(){
   clearInterval(medInterval);
-  document.getElementById('med-active').style.display = 'none';
-  document.getElementById('med-complete').style.display = 'block';
+  document.getElementById('med-active').style.display='none';
+  document.getElementById('med-done').style.display='block';
+  addMoment(); if(audioOn) playBowl();
+}
+function resetMed(){
+  document.getElementById('med-active').style.display='none';
+  document.getElementById('med-done').style.display='none';
+  document.getElementById('med-choices').style.display='flex';
+  document.getElementById('med-tips').style.display='block';
+}
+
+// ═══ SAUNA ═══
+function tickStep(el){ el.classList.toggle('done'); }
+
+// ═══ MOMENTS ═══
+function addMoment(){ moments++; localStorage.setItem('soma_m',moments); updateMoments(); }
+function updateMoments(){ document.getElementById('m-count').textContent=moments; }
+function completeReturn(){
   addMoment();
+  document.getElementById('complete-aff').textContent=AFFIRMATIONS[moments%AFFIRMATIONS.length];
+  document.getElementById('moments-complete').textContent=`✦ ${moments} moment${moments===1?'':'s'} of return`;
 }
 
-function resetMed() {
-  document.getElementById('med-active').style.display = 'none';
-  document.getElementById('med-complete').style.display = 'none';
-  document.getElementById('med-tips').style.display = 'block';
-}
-
-// ═══════════════════════════════════════════════════
-// SAUNA LYMPH STEPS
-// ═══════════════════════════════════════════════════
-function tickStep(el) {
-  el.classList.toggle('done');
-}
-
-// ═══════════════════════════════════════════════════
-// MOMENTS
-// ═══════════════════════════════════════════════════
-function addMoment() {
-  moments++;
-  localStorage.setItem('soma_m', moments);
-  updateMoments();
-}
-
-function updateMoments() {
-  document.getElementById('m-count').textContent = moments;
-}
-
-function completeReturn() {
-  addMoment();
-  const aff = AFFIRMATIONS[moments % AFFIRMATIONS.length];
-  document.getElementById('complete-affirmation').textContent = aff;
-  document.getElementById('moments-complete').textContent = `✦ ${moments} moment${moments===1?'':'s'} of return`;
-}
-
-// ═══════════════════════════════════════════════════
-// WEB AUDIO
-// ═══════════════════════════════════════════════════
-function initAudio() {
-  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-}
-
-function stopAllAudio() {
-  activeNodes.forEach(n => { try { n.stop(); } catch(e){} });
-  activeNodes = [];
-}
-
-function toggleAudio() {
-  audioOn = !audioOn;
-  const btn = document.getElementById('audio-toggle');
-  btn.textContent = audioOn ? '♪ sound on' : '♪ sound off';
-  if (!audioOn) { stopAllAudio(); return; }
+// ═══ WEB AUDIO ═══
+function initAudio(){ if(!audioCtx) audioCtx=new(window.AudioContext||window.webkitAudioContext)(); }
+function stopDrones(){ droneNodes.forEach(n=>{try{n.gain.gain.linearRampToValueAtTime(0,audioCtx.currentTime+1.5);}catch(e){}});droneNodes=[];}
+function toggleAudio(){
+  audioOn=!audioOn;
+  document.getElementById('audio-toggle').textContent=audioOn?'♪ sounds on':'♪ sounds';
+  if(!audioOn){stopDrones();activeNodes.forEach(n=>{try{n.stop();}catch(e){}});activeNodes=[];return;}
   initAudio();
+  if(audioCtx.state==='suspended') audioCtx.resume();
   playAmbient();
-  if (currentChakra) playChakraTone(currentChakra);
+  if(currentChakra) playChakraTone(currentChakra);
+}
+document.addEventListener('click',()=>{if(audioCtx&&audioCtx.state==='suspended')audioCtx.resume();},{once:true});
+
+function playDrone(freq,gainVal,type='sine',dur=40){
+  if(!audioCtx) return;
+  const osc=audioCtx.createOscillator();
+  const g=audioCtx.createGain();
+  osc.type=type; osc.frequency.value=freq;
+  g.gain.setValueAtTime(0,audioCtx.currentTime);
+  g.gain.linearRampToValueAtTime(gainVal,audioCtx.currentTime+3);
+  g.gain.linearRampToValueAtTime(0,audioCtx.currentTime+dur);
+  osc.connect(g); g.connect(audioCtx.destination);
+  osc.start(); osc.stop(audioCtx.currentTime+dur+.1);
+  droneNodes.push({gain:g}); activeNodes.push(osc);
 }
 
-function playAmbient() {
-  if (!audioOn || !audioCtx) return;
-  // Soft heartbeat hum — two low pulses
-  const beatInterval = setInterval(() => {
-    if (!audioOn) { clearInterval(beatInterval); return; }
-    playTone(60, 0.04, 0.1, 'sine');
-    setTimeout(() => playTone(55, 0.03, 0.08, 'sine'), 200);
-  }, 1200);
-  // Breath tone — slow oscillating hum
-  playDrone(174, 0.03, 'sine', 60);
-}
-
-function playChakraTone(ck) {
-  if (!audioOn || !audioCtx) return;
-  // Solfeggio-inspired frequencies per chakra
-  const freqs = {root:396,sacral:417,solar:528,heart:639,throat:741,thirdeye:852,crown:963};
-  const freq = freqs[ck.id] || 528;
-  playDrone(freq, 0.04, 'sine', 30);
-  // Harmonic overtone
-  playDrone(freq*2, 0.015, 'sine', 30);
-}
-
-function playTone(freq, gain, dur, type='sine') {
-  if (!audioCtx) return;
-  const osc = audioCtx.createOscillator();
-  const gainNode = audioCtx.createGain();
-  osc.type = type;
-  osc.frequency.value = freq;
-  gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
-  gainNode.gain.linearRampToValueAtTime(gain, audioCtx.currentTime + 0.05);
-  gainNode.gain.linearRampToValueAtTime(0, audioCtx.currentTime + dur);
-  osc.connect(gainNode); gainNode.connect(audioCtx.destination);
-  osc.start(); osc.stop(audioCtx.currentTime + dur);
+function playTone(freq,gainVal,dur,type='sine'){
+  if(!audioCtx) return;
+  const osc=audioCtx.createOscillator();
+  const g=audioCtx.createGain();
+  osc.type=type; osc.frequency.value=freq;
+  g.gain.setValueAtTime(0,audioCtx.currentTime);
+  g.gain.linearRampToValueAtTime(gainVal,audioCtx.currentTime+0.04);
+  g.gain.exponentialRampToValueAtTime(0.0001,audioCtx.currentTime+dur);
+  osc.connect(g); g.connect(audioCtx.destination);
+  osc.start(); osc.stop(audioCtx.currentTime+dur+.05);
   activeNodes.push(osc);
 }
 
-function playDrone(freq, gain, type='sine', dur=30) {
-  if (!audioCtx) return;
-  const osc = audioCtx.createOscillator();
-  const gainNode = audioCtx.createGain();
-  osc.type = type;
-  osc.frequency.value = freq;
-  gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
-  gainNode.gain.linearRampToValueAtTime(gain, audioCtx.currentTime + 2);
-  gainNode.gain.linearRampToValueAtTime(0, audioCtx.currentTime + dur);
-  osc.connect(gainNode); gainNode.connect(audioCtx.destination);
-  osc.start(); osc.stop(audioCtx.currentTime + dur);
-  activeNodes.push(osc);
+// Heartbeat — two soft low pulses
+function startHeartbeat(){
+  let hbActive=true;
+  function beat(){
+    if(!audioOn||!audioCtx){hbActive=false;return;}
+    playTone(58,0.04,0.12,'sine');
+    setTimeout(()=>playTone(52,0.025,0.09,'sine'),160);
+    setTimeout(beat,1100);
+  }
+  beat();
 }
 
-// Resume AudioContext on user gesture (browser policy)
-document.addEventListener('click', () => {
-  if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
-}, { once: true });
+// Wind chimes — random high partial tones
+function playWindChimes(){
+  if(!audioOn||!audioCtx) return;
+  const chimeFreqs=[1047,1175,1319,1397,1568,1760,1976,2093];
+  let t=audioCtx.currentTime;
+  const numHits=4+Math.floor(Math.random()*4);
+  for(let i=0;i<numHits;i++){
+    const freq=chimeFreqs[Math.floor(Math.random()*chimeFreqs.length)];
+    const delay=Math.random()*1.2;
+    const osc=audioCtx.createOscillator();
+    const g=audioCtx.createGain();
+    osc.type='sine'; osc.frequency.value=freq;
+    g.gain.setValueAtTime(0,t+delay);
+    g.gain.linearRampToValueAtTime(0.06,t+delay+0.01);
+    g.gain.exponentialRampToValueAtTime(0.0001,t+delay+2.5);
+    osc.connect(g); g.connect(audioCtx.destination);
+    osc.start(t+delay); osc.stop(t+delay+3);
+    activeNodes.push(osc);
+  }
+}
+
+// Singing bowl — rich fundamental + overtones
+function playBowl(){
+  if(!audioCtx) return;
+  const fundamentals=[220,246.94,261.63]; // A3, B3, C4
+  const fund=fundamentals[Math.floor(Math.random()*fundamentals.length)];
+  const partials=[1, 2.756, 5.404, 8.933]; // bowl harmonics
+  partials.forEach((ratio,i)=>{
+    const osc=audioCtx.createOscillator();
+    const g=audioCtx.createGain();
+    osc.type='sine'; osc.frequency.value=fund*ratio;
+    const pk=i===0?0.12:0.06/(i+1);
+    g.gain.setValueAtTime(0,audioCtx.currentTime);
+    g.gain.linearRampToValueAtTime(pk,audioCtx.currentTime+0.15);
+    g.gain.exponentialRampToValueAtTime(0.0001,audioCtx.currentTime+6+(i*1.5));
+    osc.connect(g); g.connect(audioCtx.destination);
+    osc.start(); osc.stop(audioCtx.currentTime+8);
+    activeNodes.push(osc);
+  });
+}
+
+function playChakraTone(ck){
+  if(!audioCtx) return;
+  stopDrones();
+  // Solfeggio drone
+  playDrone(ck.freq, 0.035,'sine',45);
+  playDrone(ck.freq*2, 0.012,'sine',45);
+  playDrone(ck.freq/2, 0.02,'sine',45);
+  // Chimes after a moment
+  setTimeout(()=>{if(audioOn) playWindChimes();},1000);
+}
+
+function playAmbient(){
+  if(!audioCtx) return;
+  // Soft background pad — 174Hz foundation (Solfeggio healing)
+  playDrone(174,0.025,'sine',50);
+  playDrone(285,0.015,'sine',50);
+  // Wind chimes periodically
+  playWindChimes();
+  setTimeout(()=>{if(audioOn){playWindChimes();}},5000);
+  setTimeout(()=>{if(audioOn){playWindChimes();}},11000);
+  // Heartbeat
+  startHeartbeat();
+  // Bowl on start
+  setTimeout(()=>{if(audioOn) playBowl();},800);
+}
 </script>
 </body>
 </html>
