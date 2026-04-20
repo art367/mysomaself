@@ -212,6 +212,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
       <div class="mandala-ring idle" id="mr5" style="width:34px;height:34px;background:var(--chakra-color, rgba(155,89,182,0.2));border:none;animation-delay:1.1s"></div>
       <div class="mandala-centre" id="mandala-lbl">touch to<br>begin</div>
     </div>
+    <div id="prac-ring" class="breath-ring" style="display:none">breathe</div>
     <p id="prac-breath-lbl" style="font-size:.78rem;text-align:center;color:var(--soft);min-height:1.2em;margin-top:.5em"></p>
     <div class="card">
       <p class="card-title">✦ Biohack of the moment</p>
@@ -597,6 +598,9 @@ function runBreath(ringId,lblId,inhale,hold,exhale,cycles,onDone){
   clearAllBreath();
   const ring=document.getElementById(ringId);
   const lbl=document.getElementById(lblId);
+  // Expand mandala when breathing starts
+  const mandala=document.getElementById('prac-mandala');
+  if(mandala){mandala.classList.add('expanded');mandalaFocused=true;}
   let cycle=0;
   function phase(name,dur,next){
     if(ring){
@@ -604,11 +608,18 @@ function runBreath(ringId,lblId,inhale,hold,exhale,cycles,onDone){
       ring.style.transform=name==='inhale'?'scale(1.35)':name==='hold'?'scale(1.35)':'scale(0.82)';
       ring.className='breath-ring '+(name==='inhale'||name==='hold'?'inhale':'exhale');
     }
+    // Drive mandala directly
+    if(typeof setMandalaPhase==='function') setMandalaPhase(name);
     if(lbl) lbl.textContent=`Cycle ${cycle+1} of ${cycles} · ${name}${dur?' for '+dur+'s':''}`;
     breathTO=setTimeout(next,dur*1000);
   }
   function next(){
-    if(cycle>=cycles){if(onDone)onDone();return;}
+    if(cycle>=cycles){
+      if(typeof setMandalaPhase==='function') setMandalaPhase('rest');
+      const mandala=document.getElementById('prac-mandala');
+      if(mandala){mandala.classList.remove('expanded');mandalaFocused=false;}
+      if(onDone)onDone();return;
+    }
     phase('inhale',inhale,()=>{
       if(hold>0) phase('hold',hold,()=>phase('exhale',exhale,()=>{cycle++;next();}));
       else phase('exhale',exhale,()=>{cycle++;next();});
@@ -861,10 +872,12 @@ function toggleMandalaFocus() {
 function setMandalaPhase(phase) {
   const rings = document.querySelectorAll('.mandala-ring');
   const lbl = document.getElementById('mandala-lbl');
+  const wrap = document.getElementById('prac-mandala');
   rings.forEach(r => { r.classList.remove('idle','inhaling','exhaling'); });
   if (phase === 'inhale') {
     rings.forEach(r => r.classList.add('inhaling'));
     if (lbl) lbl.innerHTML = 'inhale';
+    if (wrap) wrap.classList.add('expanded');
   } else if (phase === 'exhale') {
     rings.forEach(r => r.classList.add('exhaling'));
     if (lbl) lbl.innerHTML = 'exhale';
@@ -873,38 +886,13 @@ function setMandalaPhase(phase) {
     if (lbl) lbl.innerHTML = 'hold';
   } else {
     rings.forEach(r => r.classList.add('idle'));
-    if (lbl) lbl.innerHTML = 'breathe';
+    if (lbl) lbl.innerHTML = 'touch to<br>begin';
   }
 }
 
-// Hook into runBreath to drive mandala
-const _origRunBreath = runBreath;
-runBreath = function(ringId, lblId, inhale, hold, exhale, cycles, onDone) {
-  // Expand mandala on breath start
-  const wrap = document.getElementById('prac-mandala');
-  if (wrap) { wrap.classList.add('expanded'); mandalaFocused = true; }
-  // Override phase display
-  const _origPhase = window._breathPhaseHook;
-  _origRunBreath(ringId, lblId, inhale, hold, exhale, cycles, function() {
-    setMandalaPhase('rest');
-    if (wrap) { wrap.classList.remove('expanded'); mandalaFocused = false; }
-    if (onDone) onDone();
-  });
-};
+// runBreath drives mandala directly
 
-// Patch breath phase into mandala via MutationObserver on prac-ring
-const pracRingObs = new MutationObserver(() => {
-  const ring = document.getElementById('prac-ring');
-  if (!ring) return;
-  const txt = (ring.textContent || '').toLowerCase();
-  if (txt.includes('inhale')) setMandalaPhase('inhale');
-  else if (txt.includes('exhale')) setMandalaPhase('exhale');
-  else if (txt.includes('hold')) setMandalaPhase('hold');
-});
-document.addEventListener('DOMContentLoaded', () => {
-  const ring = document.getElementById('prac-ring');
-  if (ring) pracRingObs.observe(ring, { childList: true, subtree: true, characterData: true });
-});
+// mandala driven directly from runBreath phase()
 
 // Auto-play on first user interaction (satisfies browser autoplay policy)
 let autoPlayDone = false;
