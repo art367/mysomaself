@@ -81,8 +81,6 @@ p{font-size:clamp(.85rem,2.5vw,1rem);line-height:1.8;text-align:center;color:var
 #moments-badge{position:fixed;top:13px;right:15px;z-index:99;font-size:.72rem;color:var(--soft);letter-spacing:.1em}
 #back-btn{position:fixed;top:13px;left:15px;z-index:99;font-size:.75rem;color:var(--soft);cursor:pointer;letter-spacing:.1em;display:none}
 #back-btn:hover{color:var(--text)}
-#audio-toggle{position:fixed;bottom:15px;right:15px;z-index:99;font-size:.75rem;color:var(--soft);cursor:pointer;letter-spacing:.1em;padding:.4em .8em;border-radius:20px;background:var(--card);border:1px solid rgba(0,0,0,.08);backdrop-filter:blur(6px)}
-#audio-toggle:hover{color:var(--text)}
 
 /* SCROLL */
 .scroll-inner{width:100%;max-width:500px;margin:0 auto;padding-bottom:50px}
@@ -96,7 +94,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 <canvas id="bg"></canvas>
 <div id="moments-badge">✦ <span id="m-count">0</span> returns</div>
 <div id="back-btn" onclick="goBack()">← back</div>
-<div id="audio-toggle" onclick="toggleAudio()">♪ sounds</div>
+
 
 <!-- START -->
 <div id="s-start" class="screen active" style="justify-content:center">
@@ -436,7 +434,7 @@ const AFFIRMATIONS = [
 // ═══ STATE ═══
 let moments = parseInt(localStorage.getItem('soma_m')||'0');
 let currentScreen='s-start', screenHistory=[], currentChakra=null;
-let audioOn=false, audioCtx=null, activeNodes=[], droneNodes=[];
+
 let breathTO=null, medInterval=null, medSec=0, medDur=0;
 
 // ═══ INIT ═══
@@ -566,7 +564,7 @@ function openChakra(id){
   const ring=document.getElementById('prac-ring');
   ring.textContent='breathe'; ring.className='breath-ring'; ring.style.transform='';
   ring.style.borderColor=ck.color+'55';
-  if(audioOn){ stopDrones(); playChakraTone(ck); }
+  
   show('s-practice');
 }
 
@@ -601,7 +599,7 @@ function startPracticeBreath(){
   const [i,h,e]=currentChakra.breathPattern;
   runBreath('prac-ring','prac-breath-lbl',i,h,e,currentChakra.breathCycles,()=>{
     document.getElementById('prac-start-btn').textContent='✓ Practice Complete';
-    addMoment(); if(audioOn) playBowl();
+    addMoment(); 
   });
 }
 
@@ -639,7 +637,7 @@ function scanAction(){
 function startPainRelease(){
   runBreath('pain-ring','pain-lbl',4,1,6,6,()=>{
     document.getElementById('pain-lbl').textContent='Six cycles complete. Rest here now.';
-    addMoment(); if(audioOn) playBowl();
+    addMoment(); 
   });
 }
 
@@ -668,13 +666,13 @@ function startMed(mins,title,guidance){
     ring.style.transform=bp===2?'scale(0.82)':'scale(1.3)';
     if(medSec>=medDur) stopMed();
   },1000);
-  if(audioOn) playAmbient();
+  
 }
 function stopMed(){
   clearInterval(medInterval);
   document.getElementById('med-active').style.display='none';
   document.getElementById('med-done').style.display='block';
-  addMoment(); if(audioOn) playBowl();
+  addMoment(); 
 }
 function resetMed(){
   document.getElementById('med-active').style.display='none';
@@ -695,124 +693,6 @@ function completeReturn(){
   document.getElementById('moments-complete').textContent=`✦ ${moments} moment${moments===1?'':'s'} of return`;
 }
 
-// ═══ WEB AUDIO ═══
-function initAudio(){ if(!audioCtx) audioCtx=new(window.AudioContext||window.webkitAudioContext)(); }
-function stopDrones(){ droneNodes.forEach(n=>{try{n.gain.gain.linearRampToValueAtTime(0,audioCtx.currentTime+1.5);}catch(e){}});droneNodes=[];}
-function toggleAudio(){
-  audioOn=!audioOn;
-  document.getElementById('audio-toggle').textContent=audioOn?'♪ sounds on':'♪ sounds';
-  if(!audioOn){stopDrones();activeNodes.forEach(n=>{try{n.stop();}catch(e){}});activeNodes=[];return;}
-  initAudio();
-  if(audioCtx.state==='suspended') audioCtx.resume();
-  playAmbient();
-  if(currentChakra) playChakraTone(currentChakra);
-}
-document.addEventListener('click',()=>{if(audioCtx&&audioCtx.state==='suspended')audioCtx.resume();},{once:true});
-
-function playDrone(freq,gainVal,type='sine',dur=40){
-  if(!audioCtx) return;
-  const osc=audioCtx.createOscillator();
-  const g=audioCtx.createGain();
-  osc.type=type; osc.frequency.value=freq;
-  g.gain.setValueAtTime(0,audioCtx.currentTime);
-  g.gain.linearRampToValueAtTime(gainVal,audioCtx.currentTime+3);
-  g.gain.linearRampToValueAtTime(0,audioCtx.currentTime+dur);
-  osc.connect(g); g.connect(audioCtx.destination);
-  osc.start(); osc.stop(audioCtx.currentTime+dur+.1);
-  droneNodes.push({gain:g}); activeNodes.push(osc);
-}
-
-function playTone(freq,gainVal,dur,type='sine'){
-  if(!audioCtx) return;
-  const osc=audioCtx.createOscillator();
-  const g=audioCtx.createGain();
-  osc.type=type; osc.frequency.value=freq;
-  g.gain.setValueAtTime(0,audioCtx.currentTime);
-  g.gain.linearRampToValueAtTime(gainVal,audioCtx.currentTime+0.04);
-  g.gain.exponentialRampToValueAtTime(0.0001,audioCtx.currentTime+dur);
-  osc.connect(g); g.connect(audioCtx.destination);
-  osc.start(); osc.stop(audioCtx.currentTime+dur+.05);
-  activeNodes.push(osc);
-}
-
-// Heartbeat — two soft low pulses
-function startHeartbeat(){
-  let hbActive=true;
-  function beat(){
-    if(!audioOn||!audioCtx){hbActive=false;return;}
-    playTone(58,0.04,0.12,'sine');
-    setTimeout(()=>playTone(52,0.025,0.09,'sine'),160);
-    setTimeout(beat,1100);
-  }
-  beat();
-}
-
-// Wind chimes — random high partial tones
-function playWindChimes(){
-  if(!audioOn||!audioCtx) return;
-  const chimeFreqs=[1047,1175,1319,1397,1568,1760,1976,2093];
-  let t=audioCtx.currentTime;
-  const numHits=4+Math.floor(Math.random()*4);
-  for(let i=0;i<numHits;i++){
-    const freq=chimeFreqs[Math.floor(Math.random()*chimeFreqs.length)];
-    const delay=Math.random()*1.2;
-    const osc=audioCtx.createOscillator();
-    const g=audioCtx.createGain();
-    osc.type='sine'; osc.frequency.value=freq;
-    g.gain.setValueAtTime(0,t+delay);
-    g.gain.linearRampToValueAtTime(0.06,t+delay+0.01);
-    g.gain.exponentialRampToValueAtTime(0.0001,t+delay+2.5);
-    osc.connect(g); g.connect(audioCtx.destination);
-    osc.start(t+delay); osc.stop(t+delay+3);
-    activeNodes.push(osc);
-  }
-}
-
-// Singing bowl — rich fundamental + overtones
-function playBowl(){
-  if(!audioCtx) return;
-  const fundamentals=[220,246.94,261.63]; // A3, B3, C4
-  const fund=fundamentals[Math.floor(Math.random()*fundamentals.length)];
-  const partials=[1, 2.756, 5.404, 8.933]; // bowl harmonics
-  partials.forEach((ratio,i)=>{
-    const osc=audioCtx.createOscillator();
-    const g=audioCtx.createGain();
-    osc.type='sine'; osc.frequency.value=fund*ratio;
-    const pk=i===0?0.12:0.06/(i+1);
-    g.gain.setValueAtTime(0,audioCtx.currentTime);
-    g.gain.linearRampToValueAtTime(pk,audioCtx.currentTime+0.15);
-    g.gain.exponentialRampToValueAtTime(0.0001,audioCtx.currentTime+6+(i*1.5));
-    osc.connect(g); g.connect(audioCtx.destination);
-    osc.start(); osc.stop(audioCtx.currentTime+8);
-    activeNodes.push(osc);
-  });
-}
-
-function playChakraTone(ck){
-  if(!audioCtx) return;
-  stopDrones();
-  // Solfeggio drone
-  playDrone(ck.freq, 0.035,'sine',45);
-  playDrone(ck.freq*2, 0.012,'sine',45);
-  playDrone(ck.freq/2, 0.02,'sine',45);
-  // Chimes after a moment
-  setTimeout(()=>{if(audioOn) playWindChimes();},1000);
-}
-
-function playAmbient(){
-  if(!audioCtx) return;
-  // Soft background pad — 174Hz foundation (Solfeggio healing)
-  playDrone(174,0.025,'sine',50);
-  playDrone(285,0.015,'sine',50);
-  // Wind chimes periodically
-  playWindChimes();
-  setTimeout(()=>{if(audioOn){playWindChimes();}},5000);
-  setTimeout(()=>{if(audioOn){playWindChimes();}},11000);
-  // Heartbeat
-  startHeartbeat();
-  // Bowl on start
-  setTimeout(()=>{if(audioOn) playBowl();},800);
-}
 </script>
 </body>
 </html>
