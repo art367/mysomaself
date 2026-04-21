@@ -107,6 +107,36 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 .mandala-ring.exhaling{animation:mandalaContract 6s ease-in-out forwards}
 .mandala-centre{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:.85rem;color:var(--muted);letter-spacing:.08em;text-align:center;pointer-events:none;transition:font-size .5s}
 .mandala-wrap.expanded .mandala-centre{font-size:.7rem}
+
+/* ═══ SOMA SHIFTS ═══ */
+.soma-section{margin:1.2em 0 0.5em;width:100%;max-width:380px}
+.soma-section-title{font-size:.72rem;letter-spacing:.15em;color:var(--muted);text-transform:uppercase;margin-bottom:.7em;text-align:center}
+.soma-cards{display:flex;flex-direction:column;gap:.65em}
+.soma-card{background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.13);border-radius:16px;padding:.9em 1.1em;cursor:pointer;transition:all .3s;position:relative;overflow:hidden}
+.soma-card:active{transform:scale(0.98)}
+.soma-card-inner{display:flex;align-items:center;gap:.9em}
+.soma-orb{width:38px;height:38px;border-radius:50%;flex-shrink:0;animation:somaIdle 3s ease-in-out infinite;display:flex;align-items:center;justify-content:center;font-size:1.1rem}
+@keyframes somaIdle{0%,100%{transform:scale(1);opacity:.85}50%{transform:scale(1.12);opacity:1}}
+.soma-card-text{flex:1}
+.soma-card-title{font-size:.92rem;font-weight:600;color:var(--text);margin-bottom:.15em}
+.soma-card-sub{font-size:.75rem;color:var(--muted)}
+.soma-card-time{font-size:.68rem;color:var(--muted);opacity:.7;margin-top:.2em}
+/* Soma Shifts full screen */
+#s-soma{background:linear-gradient(160deg,#0d0820 0%,#1a0f35 100%)}
+.soma-tabs{display:flex;gap:.4em;margin-bottom:1em;flex-wrap:wrap;justify-content:center}
+.soma-tab{padding:.35em .85em;border-radius:20px;font-size:.72rem;letter-spacing:.08em;cursor:pointer;border:1px solid rgba(255,255,255,0.15);color:var(--muted);transition:all .3s}
+.soma-tab.active{background:rgba(155,89,182,0.3);border-color:rgba(155,89,182,0.6);color:#e0d0ff}
+.soma-grid{display:flex;flex-direction:column;gap:.7em;width:100%;max-width:380px}
+/* Soma Shift expanded overlay */
+#soma-overlay{position:fixed;inset:0;z-index:100;display:none;flex-direction:column;align-items:center;justify-content:center;padding:2em 1.5em;text-align:center}
+#soma-overlay.active{display:flex}
+.soma-big-orb{width:120px;height:120px;border-radius:50%;margin:0 auto 1.5em;animation:somaExpand 4s ease-in-out infinite;display:flex;align-items:center;justify-content:center;font-size:2.8rem}
+@keyframes somaExpand{0%,100%{transform:scale(1);box-shadow:0 0 30px currentColor}50%{transform:scale(1.15);box-shadow:0 0 60px currentColor}}
+.soma-overlay-title{font-size:1.5rem;font-weight:300;margin-bottom:.4em;letter-spacing:.05em}
+.soma-overlay-what{font-size:.9rem;color:var(--muted);margin-bottom:1.2em;max-width:280px}
+.soma-overlay-prompt{font-size:1.05rem;font-style:italic;color:#e0d0ff;margin-bottom:1.8em;max-width:300px;line-height:1.6}
+.soma-overlay-why{font-size:.78rem;color:var(--muted);margin-bottom:2em;max-width:300px;line-height:1.5;opacity:.7}
+.soma-close{position:absolute;top:1.2em;right:1.2em;font-size:1.2rem;cursor:pointer;opacity:.5}
 </style>
 </head>
 <body>
@@ -125,11 +155,17 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
   <p>Your body is not a problem to fix.<br>It is a home to return to.</p>
   <div class="btn-row" style="margin-top:1.4em">
     <div class="btn primary" onclick="show('s-chakra')">Begin the Journey</div>
+    <div class="btn" onclick="show('s-soma')">Soma Shifts</div>
     <div class="btn" onclick="show('s-meditate')">Just Meditate</div>
     <div class="btn" onclick="show('s-sauna')">Wellness Session Prep</div>
   </div>
   <p style="margin-top:2em;font-size:.76rem;letter-spacing:.1em">✦ touch · breathe · return ✦</p>
   <div id="music-btn" class="btn" onclick="toggleMusic()" style="margin-top:.8em;font-size:.78rem">♪ play music</div>
+  <div class="soma-section">
+    <div class="soma-section-title">✦ a small shift for you</div>
+    <div class="soma-cards" id="home-soma-cards"></div>
+    <div style="text-align:center;margin-top:.7em"><span style="font-size:.72rem;color:var(--muted);cursor:pointer;letter-spacing:.08em" onclick="show('s-soma')">see all soma shifts →</span></div>
+  </div>
 <div class="hz-footer" style="margin-top:1.2em"><span class="hz-heart">🎵</span><div class="hz-text"><span class="hz-val">Solfeggio Frequencies</span><br>528Hz · 963Hz · healing tones</div></div>
 </div>
 
@@ -369,6 +405,32 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 </div>
 
 <!-- COMPLETE -->
+<!-- SOMA SHIFTS SCREEN -->
+<div id="s-soma" class="screen">
+  <h2 style="font-size:1.2rem;font-weight:300;letter-spacing:.1em;margin-bottom:.3em">Soma Shifts</h2>
+  <p style="font-size:.76rem;color:var(--muted);margin-bottom:1em">Small moments. Real shifts.</p>
+  <div class="soma-tabs">
+    <div class="soma-tab active" onclick="filterSoma('all',this)">All</div>
+    <div class="soma-tab" onclick="filterSoma('ground',this)">Ground</div>
+    <div class="soma-tab" onclick="filterSoma('calm',this)">Calm</div>
+    <div class="soma-tab" onclick="filterSoma('release',this)">Release</div>
+    <div class="soma-tab" onclick="filterSoma('energise',this)">Energise</div>
+    <div class="soma-tab" onclick="filterSoma('sleep',this)">Sleep</div>
+  </div>
+  <div class="soma-grid" id="soma-grid"></div>
+</div>
+
+<!-- SOMA OVERLAY -->
+<div id="soma-overlay">
+  <div class="soma-close" onclick="closeSomaOverlay()">✕</div>
+  <div class="soma-big-orb" id="soma-big-orb"></div>
+  <div class="soma-overlay-title" id="soma-ov-title"></div>
+  <div class="soma-overlay-what" id="soma-ov-what"></div>
+  <div class="soma-overlay-prompt" id="soma-ov-prompt"></div>
+  <div class="soma-overlay-why" id="soma-ov-why"></div>
+  <div class="btn primary" onclick="closeSomaOverlay()" style="margin-top:.5em">Notice what changed ✦</div>
+</div>
+
 <div id="s-complete" class="screen" style="justify-content:center">
   <p class="tagline fade-up">a moment of return</p>
   <h2 class="fade-up">You came home.</h2>
@@ -903,6 +965,141 @@ show = function(screenId) {
   }
   _showOrig(screenId);
 };
+
+// ═══ SOMA SHIFTS ═══
+const SOMA_SHIFTS = [
+  // MORNING
+  { id:'cool-face',  title:'Cool your face',      sub:'Wake your system gently',        time:'1 min',  period:'morning', category:'energise', emoji:'💧', color:'#3498db',
+    what:'Splash cool water on your face, or press a cold cloth to your forehead and cheeks.',
+    why:'Cold water activates the dive reflex — slowing your heart rate and sharpening focus without caffeine.',
+    prompt:'"Let the cool settle you into this moment."' },
+  { id:'step-light', title:'Step into light',      sub:'Let the morning in',             time:'2 min',  period:'morning', category:'energise', emoji:'☀️', color:'#f1c40f',
+    what:'Move to a window or step outside. Let natural light reach your eyes and skin.',
+    why:'Morning light sets your circadian rhythm, boosting serotonin and helping you feel more awake and grounded.',
+    prompt:'"Soften your eyes. Let the light come to you."' },
+  { id:'slow-breath',title:'Breathe slowly',       sub:'Anchor yourself in your body',   time:'2 min',  period:'morning', category:'calm',     emoji:'🌬️', color:'#9b59b6',
+    what:'Inhale for 4 counts through your nose. Exhale slowly for 6 counts through your mouth.',
+    why:'A longer exhale activates your parasympathetic nervous system — telling your body it is safe.',
+    prompt:'"Each breath is a small return to yourself."' },
+  // MIDDAY
+  { id:'hum',        title:'Hum softly',           sub:'Soothe your nervous system',     time:'1 min',  period:'midday',  category:'calm',     emoji:'🎵', color:'#1abc9c',
+    what:'Gently hum any tone — no melody needed. Just a soft, continuous sound from your throat.',
+    why:'Humming stimulates the vagus nerve via vibration, helping your body soften and settle even in a busy day.',
+    prompt:'"Let the sound move through your chest."' },
+  { id:'feel-feet',  title:'Feel your feet',       sub:'Come back to the ground',        time:'30 sec', period:'midday',  category:'ground',   emoji:'🌿', color:'#e74c3c',
+    what:'Pause wherever you are. Press your feet firmly into the floor. Feel the weight of your body.',
+    why:'Bringing attention to your feet interrupts anxious thought loops and returns you to the present moment.',
+    prompt:'"You are here. The ground holds you."' },
+  { id:'hand-heart', title:'Hand on heart',        sub:'A moment of self-kindness',      time:'1 min',  period:'midday',  category:'release',  emoji:'💚', color:'#2ecc71',
+    what:'Place one or both hands on your chest. Feel the warmth. Feel your heartbeat if you can.',
+    why:'Physical self-touch releases oxytocin — your body's natural comfort response. You don't need a reason.',
+    prompt:'"You are allowed to be kind to yourself right now."' },
+  // EVENING
+  { id:'sway',       title:'Gentle sway',          sub:'Let your body find its rhythm',  time:'2 min',  period:'evening', category:'release',  emoji:'🌙', color:'#9b59b6',
+    what:'Stand or sit and let your body begin to sway gently — side to side, or forward and back. No technique needed.',
+    why:'Rhythmic movement regulates the nervous system. It's one of the most ancient forms of self-soothing.',
+    prompt:'"Let your body lead. It knows what it needs."' },
+  { id:'write-out',  title:'Write it out',         sub:'Empty what you're carrying',    time:'3 min',  period:'evening', category:'release',  emoji:'🖊️', color:'#8e44ad',
+    what:'Write freely for 2–3 minutes. No editing. No rereading. Just let words empty out of you.',
+    why:'Expressive writing reduces cortisol and helps your brain process the day before sleep.',
+    prompt:'"Nothing you write here needs to be perfect."' },
+  { id:'phys-sigh',  title:'Physiological sigh',  sub:'Reset your stress response',     time:'30 sec', period:'evening', category:'calm',     emoji:'😮‍💨', color:'#3498db',
+    what:'Take a full inhale through your nose. At the top, sniff in a little more air. Then a long, slow exhale through your mouth.',
+    why:'This double-inhale fully inflates your lungs and the long exhale rapidly lowers heart rate — the fastest known stress reset.',
+    prompt:'"One breath. Let the day begin to leave."' },
+  // NIGHT
+  { id:'dim-lights', title:'Dim the lights',       sub:'Signal your body it's time',    time:'1 min',  period:'night',   category:'sleep',    emoji:'🕯️', color:'#2c3e50',
+    what:'Lower or switch off overhead lights. Use a lamp, candle, or night light instead.',
+    why:'Bright light suppresses melatonin production. Dimming lights even 30 minutes before bed improves sleep onset.',
+    prompt:'"Let the dark be soft, not empty."' },
+  { id:'body-scan',  title:'Body scan',            sub:'A quiet conversation with yourself', time:'3 min', period:'night', category:'sleep',   emoji:'🌌', color:'#1a1a4e',
+    what:'Close your eyes. Slowly move your attention from your feet upward through your whole body, noticing without fixing.',
+    why:'A body scan quiets the mind by directing attention inward — reducing mental chatter before sleep.',
+    prompt:'"You don't need to change anything. Just notice."' },
+  { id:'long-exhale',title:'Long exhale',          sub:'Let go of the day',              time:'2 min',  period:'night',   category:'sleep',    emoji:'🌬️', color:'#2980b9',
+    what:'Breathe in gently for 4 counts. Breathe out slowly for 8 counts. Repeat 4–5 times.',
+    why:'A double-length exhale activates your rest-and-digest system, lowering heart rate and preparing you for sleep.',
+    prompt:'"With every exhale, the day softens and releases."' }
+];
+
+const SOMA_CATEGORY_COLORS = {
+  ground:'#c0392b', calm:'#2980b9', release:'#8e44ad', energise:'#d4ac0d', sleep:'#1a1a6e'
+};
+
+function getSomaPeriod(){
+  const h = new Date().getHours();
+  if(h>=5 && h<12) return 'morning';
+  if(h>=12 && h<17) return 'midday';
+  if(h>=17 && h<21) return 'evening';
+  return 'night';
+}
+
+function renderSomaCard(shift){
+  return `<div class="soma-card" onclick="openSomaShift('${shift.id}')">
+    <div class="soma-card-inner">
+      <div class="soma-orb" style="background:${shift.color}22;color:${shift.color};box-shadow:0 0 12px ${shift.color}44">${shift.emoji}</div>
+      <div class="soma-card-text">
+        <div class="soma-card-title">${shift.title}</div>
+        <div class="soma-card-sub">${shift.sub}</div>
+        <div class="soma-card-time">⏱ ${shift.time}</div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderHomeSoma(){
+  const period = getSomaPeriod();
+  const cards = document.getElementById('home-soma-cards');
+  if(!cards) return;
+  const picks = SOMA_SHIFTS.filter(s=>s.period===period).slice(0,2);
+  cards.innerHTML = picks.map(renderSomaCard).join('');
+}
+
+function renderSomaGrid(filter){
+  const grid = document.getElementById('soma-grid');
+  if(!grid) return;
+  const period = getSomaPeriod();
+  let shifts = filter==='all' ? SOMA_SHIFTS : SOMA_SHIFTS.filter(s=>s.category===filter);
+  // Sort: current period first
+  shifts = [...shifts.filter(s=>s.period===period), ...shifts.filter(s=>s.period!==period)];
+  grid.innerHTML = shifts.map(renderSomaCard).join('');
+}
+
+function filterSoma(cat, el){
+  document.querySelectorAll('.soma-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  renderSomaGrid(cat);
+}
+
+function openSomaShift(id){
+  const s = SOMA_SHIFTS.find(x=>x.id===id); if(!s) return;
+  document.getElementById('soma-big-orb').textContent = s.emoji;
+  document.getElementById('soma-big-orb').style.background = s.color+'22';
+  document.getElementById('soma-big-orb').style.boxShadow = '0 0 40px '+s.color+'88';
+  document.getElementById('soma-ov-title').textContent = s.title;
+  document.getElementById('soma-ov-what').textContent = s.what;
+  document.getElementById('soma-ov-prompt').textContent = s.prompt;
+  document.getElementById('soma-ov-why').textContent = s.why;
+  const ov = document.getElementById('soma-overlay');
+  ov.style.background = `linear-gradient(160deg,${s.color}22 0%,#0d0820 100%)`;
+  ov.classList.add('active');
+}
+
+function closeSomaOverlay(){
+  document.getElementById('soma-overlay').classList.remove('active');
+}
+
+// Init soma on show
+const _somaOrigShow = show;
+show = function(id){
+  _somaOrigShow(id);
+  if(id==='s-start') renderHomeSoma();
+  if(id==='s-soma') renderSomaGrid('all');
+};
+
+// Init on load
+document.addEventListener('DOMContentLoaded', ()=>{ renderHomeSoma(); });
+
 </script>
 </body>
 </html>
