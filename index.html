@@ -516,8 +516,12 @@ function initCanvas(){
 // ═══ LOTUS CHAKRA FIGURE ═══
 function getActiveChakra(){
   const h=new Date().getHours()+new Date().getMinutes()/60;
-  for(let i=CHAKRAS.length-1;i>=0;i--) if(h>=CHAKRAS[i].timeStart) return CHAKRAS[i];
-  return CHAKRAS[CHAKRAS.length-1];
+  for(let i=0;i<CHAKRAS.length;i++){
+    const ck=CHAKRAS[i];
+    if(h>=ck.timeStart && h<ck.timeEnd) return ck;
+  }
+  // midnight to 5am or 9pm+ → crown
+  return CHAKRAS[0];
 }
 function renderLotus(){
   const active=getActiveChakra();
