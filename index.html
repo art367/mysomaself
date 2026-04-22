@@ -110,22 +110,22 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 
 /* ═══ SOMA SHIFTS ═══ */
 .soma-section{margin:1.2em 0 0.5em;width:100%;max-width:380px}
-.soma-section-title{font-size:.72rem;letter-spacing:.15em;color:var(--muted);text-transform:uppercase;margin-bottom:.7em;text-align:center}
+.soma-section-title{font-size:.72rem;letter-spacing:.15em;color:#7a5fa0;text-transform:uppercase;margin-bottom:.7em;text-align:center}
 .soma-cards{display:flex;flex-direction:column;gap:.65em}
-.soma-card{background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.13);border-radius:16px;padding:.9em 1.1em;cursor:pointer;transition:all .3s;position:relative;overflow:hidden}
+.soma-card{background:rgba(255,255,255,0.72);border:1px solid rgba(155,89,182,0.18);border-radius:16px;padding:.9em 1.1em;cursor:pointer;transition:all .3s;position:relative;overflow:hidden}
 .soma-card:active{transform:scale(0.98)}
 .soma-card-inner{display:flex;align-items:center;gap:.9em}
 .soma-orb{width:38px;height:38px;border-radius:50%;flex-shrink:0;animation:somaIdle 3s ease-in-out infinite;display:flex;align-items:center;justify-content:center;font-size:1.1rem}
 @keyframes somaIdle{0%,100%{transform:scale(1);opacity:.85}50%{transform:scale(1.12);opacity:1}}
 .soma-card-text{flex:1}
-.soma-card-title{font-size:.92rem;font-weight:600;color:var(--text);margin-bottom:.15em}
-.soma-card-sub{font-size:.75rem;color:var(--muted)}
+.soma-card-title{font-size:.92rem;font-weight:600;color:#2d1a5e;margin-bottom:.15em}
+.soma-card-sub{font-size:.75rem;color:#6a5a8a}
 .soma-card-time{font-size:.68rem;color:var(--muted);opacity:.7;margin-top:.2em}
 /* Soma Shifts full screen */
-#s-soma{background:linear-gradient(160deg,#0d0820 0%,#1a0f35 100%)}
+#s-soma{background:linear-gradient(160deg,#f4eeff 0%,#e8e0f8 45%,#dff0f5 100%)}
 .soma-tabs{display:flex;gap:.4em;margin-bottom:1em;flex-wrap:wrap;justify-content:center}
-.soma-tab{padding:.35em .85em;border-radius:20px;font-size:.72rem;letter-spacing:.08em;cursor:pointer;border:1px solid rgba(255,255,255,0.15);color:var(--muted);transition:all .3s}
-.soma-tab.active{background:rgba(155,89,182,0.3);border-color:rgba(155,89,182,0.6);color:#e0d0ff}
+.soma-tab{padding:.35em .85em;border-radius:20px;font-size:.72rem;letter-spacing:.08em;cursor:pointer;border:1px solid rgba(155,89,182,0.28);color:#7a5fa0;transition:all .3s}
+.soma-tab.active{background:rgba(155,89,182,0.18);border-color:rgba(155,89,182,0.55);color:#4a2080}
 .soma-grid{display:flex;flex-direction:column;gap:.7em;width:100%;max-width:380px}
 /* Soma Shift expanded overlay */
 #soma-overlay{position:fixed;inset:0;z-index:100;display:none;flex-direction:column;align-items:center;justify-content:center;padding:2em 1.5em;text-align:center}
@@ -408,7 +408,8 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 <!-- SOMA SHIFTS SCREEN -->
 <div id="s-soma" class="screen" style="overflow-y:auto;justify-content:flex-start;align-items:center">
   <h2 style="font-size:1.2rem;font-weight:300;letter-spacing:.1em;margin-bottom:.3em;margin-top:.5em">Soma Shifts</h2>
-  <p style="font-size:.76rem;color:var(--muted);margin-bottom:.8em">Small moments. Real shifts.</p>
+  <p style="font-size:.76rem;color:#7a5fa0;margin-bottom:.5em">Small moments. Real shifts.</p>
+  <div id="soma-music-btn" onclick="toggleMusic()" style="font-size:.7rem;letter-spacing:.1em;color:#9b59b6;cursor:pointer;margin-bottom:.7em;opacity:.75">♪ pause music</div>
   <div class="soma-tabs">
     <div class="soma-tab active" onclick="filterSoma('all',this)">All</div>
     <div class="soma-tab" onclick="filterSoma('ground',this)">Ground</div>
@@ -887,6 +888,8 @@ function toggleMusic() {
 function updateMusicBtn() {
   const btn = document.getElementById('music-btn');
   if (btn) btn.textContent = musicPlaying ? '♪ pause music' : '♪ play music';
+  const sb = document.getElementById('soma-music-btn');
+  if (sb) sb.textContent = musicPlaying ? '♪ pause music' : '♪ play music';
 }
 
 function updateHzFooter(chakraId) {
@@ -961,6 +964,12 @@ show = function(screenId) {
   } else if (screenId === 's-start' && musicPlaying && currentAudioType === 'chakra') {
     fadeOut(chakraAudio, 1200);
     setTimeout(() => playOpeningMusic(), 400);
+  } else if (screenId === 's-soma') {
+    // keep music playing on soma shifts screen; sync button state
+    setTimeout(() => {
+      const sb = document.getElementById('soma-music-btn');
+      if (sb) sb.textContent = musicPlaying ? '♪ pause music' : '♪ play music';
+    }, 50);
   } else if (screenId !== 's-start' && screenId !== 's-practice') {
     if (!openingTrack.paused) fadeOut(openingTrack, 1200);
   }
