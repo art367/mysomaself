@@ -155,7 +155,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
   <p>Your body is not a problem to fix.<br>It is a home to return to.</p>
   <div class="btn-row" style="margin-top:1.4em">
     <div class="btn primary" onclick="show('s-chakra')">Begin the Journey</div>
-    <div class="btn" onclick="show('s-soma')">Soma Shifts</div>
+    <div class="btn" onclick="show('s-soma');renderSomaGrid('all')">Soma Shifts</div>
     <div class="btn" onclick="show('s-meditate')">Just Meditate</div>
     <div class="btn" onclick="show('s-sauna')">Wellness Session Prep</div>
   </div>
@@ -164,7 +164,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
   <div class="soma-section">
     <div class="soma-section-title">✦ a small shift for you</div>
     <div class="soma-cards" id="home-soma-cards"></div>
-    <div style="text-align:center;margin-top:.7em"><span style="font-size:.72rem;color:var(--muted);cursor:pointer;letter-spacing:.08em" onclick="show('s-soma')">see all soma shifts →</span></div>
+    <div style="text-align:center;margin-top:.7em"><span style="font-size:.72rem;color:var(--muted);cursor:pointer;letter-spacing:.08em" onclick="show('s-soma');renderSomaGrid('all')">see all soma shifts →</span></div>
   </div>
 <div class="hz-footer" style="margin-top:1.2em"><span class="hz-heart">🎵</span><div class="hz-text"><span class="hz-val">Solfeggio Frequencies</span><br>528Hz · 963Hz · healing tones</div></div>
 </div>
@@ -1093,12 +1093,10 @@ function closeSomaOverlay(){
   ov.style.display = 'none';
 }
 
-// Soma home cards refresh on returning to start
-const _somaOrigShow = show;
-show = function(id){
-  _somaOrigShow(id);
-  if(id==='s-start') setTimeout(renderHomeSoma, 50);
-};
+// Soma home cards on load
+if(document.readyState==='loading'){
+  document.addEventListener('DOMContentLoaded', renderHomeSoma);
+} else { renderHomeSoma(); }
 
 // Init on load
 document.addEventListener('DOMContentLoaded', ()=>{ setTimeout(renderHomeSoma, 200); });
