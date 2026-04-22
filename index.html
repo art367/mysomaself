@@ -127,16 +127,19 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 .soma-tab{padding:.35em .85em;border-radius:20px;font-size:.72rem;letter-spacing:.08em;cursor:pointer;border:1px solid rgba(155,89,182,0.28);color:#7a5fa0;transition:all .3s}
 .soma-tab.active{background:rgba(155,89,182,0.18);border-color:rgba(155,89,182,0.55);color:#4a2080}
 .soma-grid{display:flex;flex-direction:column;gap:.7em;width:100%;max-width:380px}
-/* Soma Shift expanded overlay */
-#soma-overlay{position:fixed;inset:0;z-index:100;display:none;flex-direction:column;align-items:center;justify-content:center;padding:2em 1.5em;text-align:center}
+/* Soma Shift expanded overlay — tarot card style */
+#soma-overlay{position:fixed;inset:0;z-index:100;display:none;flex-direction:column;align-items:center;justify-content:center;padding:1.5em;background:rgba(30,10,60,0.72);backdrop-filter:blur(8px)}
 #soma-overlay.active{display:flex}
-.soma-big-orb{width:120px;height:120px;border-radius:50%;margin:0 auto 1.5em;animation:somaExpand 4s ease-in-out infinite;display:flex;align-items:center;justify-content:center;font-size:2.8rem}
-@keyframes somaExpand{0%,100%{transform:scale(1);box-shadow:0 0 30px currentColor}50%{transform:scale(1.15);box-shadow:0 0 60px currentColor}}
-.soma-overlay-title{font-size:1.5rem;font-weight:300;margin-bottom:.4em;letter-spacing:.05em}
-.soma-overlay-what{font-size:.9rem;color:var(--muted);margin-bottom:1.2em;max-width:280px}
-.soma-overlay-prompt{font-size:1.05rem;font-style:italic;color:#e0d0ff;margin-bottom:1.8em;max-width:300px;line-height:1.6}
-.soma-overlay-why{font-size:.78rem;color:var(--muted);margin-bottom:2em;max-width:300px;line-height:1.5;opacity:.7}
-.soma-close{position:absolute;top:1.2em;right:1.2em;font-size:1.2rem;cursor:pointer;opacity:.5}
+.soma-tarot-card{background:linear-gradient(170deg,#fdf8ff 0%,#f0eaff 60%,#e8f4ff 100%);border-radius:24px;padding:2em 1.8em 1.8em;max-width:340px;width:100%;box-shadow:0 8px 48px rgba(100,60,180,0.28),0 2px 12px rgba(0,0,0,0.18);position:relative;text-align:center;border:1.5px solid rgba(155,89,182,0.22)}
+.soma-tarot-card::before{content:'';position:absolute;inset:6px;border-radius:18px;border:1px solid rgba(155,89,182,0.15);pointer-events:none}
+.soma-big-orb{width:90px;height:90px;border-radius:50%;margin:0 auto 1em;animation:somaExpand 3s ease-in-out infinite;display:flex;align-items:center;justify-content:center;font-size:2.4rem}
+@keyframes somaExpand{0%,100%{transform:scale(1);box-shadow:0 0 20px var(--orb-color,rgba(155,89,182,0.4))}50%{transform:scale(1.12);box-shadow:0 0 50px var(--orb-color,rgba(155,89,182,0.6))}}
+.soma-overlay-title{font-size:1.35rem;font-weight:400;margin-bottom:.2em;letter-spacing:.05em;color:#2d1a5e}
+.soma-overlay-what{font-size:.82rem;color:#7a5fa0;margin-bottom:1em;line-height:1.5;font-style:italic}
+.soma-divider{width:40px;height:1.5px;background:linear-gradient(90deg,transparent,rgba(155,89,182,0.4),transparent);margin:0 auto .9em}
+.soma-overlay-prompt{font-size:1rem;color:#2d1a5e;margin-bottom:.9em;line-height:1.65;font-weight:400}
+.soma-overlay-why{font-size:.75rem;color:#9a85b0;margin-bottom:1.2em;line-height:1.5;padding:.6em .8em;background:rgba(155,89,182,0.07);border-radius:10px}
+.soma-close{position:absolute;top:.9em;right:1em;font-size:1.3rem;cursor:pointer;color:#9a85b0;line-height:1;z-index:2}
 </style>
 </head>
 <body>
@@ -423,13 +426,16 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 
 <!-- SOMA OVERLAY -->
 <div id="soma-overlay" style="display:none">
-  <div class="soma-close" onclick="closeSomaOverlay()">✕</div>
-  <div class="soma-big-orb" id="soma-big-orb"></div>
-  <div class="soma-overlay-title" id="soma-ov-title"></div>
-  <div class="soma-overlay-what" id="soma-ov-what"></div>
-  <div class="soma-overlay-prompt" id="soma-ov-prompt"></div>
-  <div class="soma-overlay-why" id="soma-ov-why"></div>
-  <div class="btn primary" onclick="closeSomaOverlay()" style="margin-top:.5em">Notice what changed ✦</div>
+  <div class="soma-tarot-card">
+    <div class="soma-close" onclick="closeSomaOverlay()">✕</div>
+    <div class="soma-big-orb" id="soma-big-orb"></div>
+    <div class="soma-overlay-title" id="soma-ov-title"></div>
+    <div class="soma-overlay-what" id="soma-ov-what"></div>
+    <div class="soma-divider"></div>
+    <div class="soma-overlay-prompt" id="soma-ov-prompt"></div>
+    <div class="soma-overlay-why" id="soma-ov-why"></div>
+    <div class="btn primary" onclick="closeSomaOverlay()" style="margin-top:.3em;width:100%">Notice what changed ✦</div>
+  </div>
 </div>
 
 <div id="s-complete" class="screen" style="justify-content:center">
@@ -1083,9 +1089,11 @@ function filterSoma(cat, el){
 
 function openSomaShift(id){
   const s = SOMA_SHIFTS.find(x=>x.id===id); if(!s) return;
-  document.getElementById('soma-big-orb').textContent = s.emoji;
-  document.getElementById('soma-big-orb').style.background = s.color+'22';
-  document.getElementById('soma-big-orb').style.boxShadow = '0 0 40px '+s.color+'88';
+  const orb = document.getElementById('soma-big-orb');
+  orb.textContent = s.emoji;
+  orb.style.background = s.color+'22';
+  orb.style.setProperty('--orb-color', s.color+'88');
+  orb.style.boxShadow = '0 0 40px '+s.color+'88';
   document.getElementById('soma-ov-title').textContent = s.title;
   document.getElementById('soma-ov-what').textContent = s.what;
   document.getElementById('soma-ov-prompt').textContent = s.prompt;
