@@ -421,7 +421,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;heigh
 </div>
 
 <!-- SOMA OVERLAY -->
-<div id="soma-overlay">
+<div id="soma-overlay" style="display:none">
   <div class="soma-close" onclick="closeSomaOverlay()">✕</div>
   <div class="soma-big-orb" id="soma-big-orb"></div>
   <div class="soma-overlay-title" id="soma-ov-title"></div>
@@ -531,6 +531,7 @@ function show(id){
   document.getElementById('back-btn').style.display=screenHistory.length?'block':'none';
   if(id==='s-complete') completeReturn();
   if(id==='s-chakra'){renderLotus();updateGreeting();}
+  if(id==='s-soma'){renderSomaGrid('all');}
   window.scrollTo(0,0);
 }
 function goBack(){
@@ -1082,19 +1083,21 @@ function openSomaShift(id){
   document.getElementById('soma-ov-why').textContent = s.why;
   const ov = document.getElementById('soma-overlay');
   ov.style.background = `linear-gradient(160deg,${s.color}22 0%,#0d0820 100%)`;
+  ov.style.display = 'flex';
   ov.classList.add('active');
 }
 
 function closeSomaOverlay(){
-  document.getElementById('soma-overlay').classList.remove('active');
+  const ov = document.getElementById('soma-overlay');
+  ov.classList.remove('active');
+  ov.style.display = 'none';
 }
 
-// Init soma on show
+// Soma home cards refresh on returning to start
 const _somaOrigShow = show;
 show = function(id){
   _somaOrigShow(id);
   if(id==='s-start') setTimeout(renderHomeSoma, 50);
-  if(id==='s-soma'){ setTimeout(()=>renderSomaGrid('all'), 50); }
 };
 
 // Init on load
